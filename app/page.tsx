@@ -9,6 +9,7 @@ import DoctorManager from "@/components/doctors/DoctorManager";
 import AdminManagementTable from "@/components/superadmin/AdminManagementTable";
 import ProfileCard from "@/components/profile/ProfileCard";
 import AuthForms from "@/components/auth/AuthForms";
+import ThemeToggle from "@/components/theme/ThemeToggle";
 import { useAppSelector } from "@/redux/hooks";
 import { ShieldCheck, Hospital, Zap, Lock } from "lucide-react";
 
@@ -19,10 +20,14 @@ export default function Home() {
   const [activeView, setActiveView] = useState<AdminView>("dashboard");
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans">
+    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans transition-colors duration-200">
       {!isAuthenticated ? (
-        /* Unauthenticated Auth Screen in Pure White Theme */
-        <div className="flex min-h-screen flex-col items-center justify-center p-6 bg-slate-50">
+        /* Unauthenticated Auth Screen */
+        <div className="relative flex min-h-screen flex-col items-center justify-center p-6 bg-slate-50">
+          {/* Top-right theme switcher */}
+          <div className="absolute top-6 right-6 z-20">
+            <ThemeToggle showLabel={true} />
+          </div>
           <div className="mb-6 text-center max-w-md">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-100 px-3 py-1 text-xs font-bold text-blue-700 mb-3">
               <ShieldCheck className="h-3.5 w-3.5" />

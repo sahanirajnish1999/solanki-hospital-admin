@@ -23,30 +23,6 @@ export interface IDoctor {
   updatedAt?: string | Date;
 }
 
-export interface RegisterDoctorRequest {
-  Name: string;
-  Email: string;
-  Phone: string;
-  Password: string;
-}
-
-export interface LoginDoctorRequest {
-  Identifier: string; // Email or Phone
-  Password: string;
-}
-
-export interface UpdateDoctorProfileRequest {
-  Name?: string;
-  Specialization?: string;
-  SpecializationId?: string;
-  Experience?: string;
-  About?: string;
-  ProfileImage?: string; // base64 or URL
-  ConsultationFee?: number;
-  AvailableDays?: string;
-  AvailableTime?: string;
-  Phone?: string;
-}
 
 export interface GetPublicDoctorsParams {
   Search?: string;

@@ -323,7 +323,7 @@ export default function DashboardOverview({
           <div className="rounded-xl border border-slate-100 bg-slate-50/70 p-3">
             <span className="font-bold text-slate-800">Doctor API</span>
             <p className="text-[11px] text-slate-500 mt-0.5">
-              Register, Login, Public directory, Profile, Online status toggle, Password
+              Public directory & profiles, doctor listings, specialization filters
             </p>
           </div>
         </div>

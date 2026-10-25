@@ -58,8 +58,6 @@ export interface LoginResponseData {
   Token: string;
 }
 
-// 3. Profile
-export type ProfileResponseData = IAdmin;
 
 // 4. Update Profile
 export interface UpdateProfileRequest {

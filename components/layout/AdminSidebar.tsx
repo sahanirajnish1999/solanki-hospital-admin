@@ -16,6 +16,7 @@ import {
   Sparkles,
   ChevronRight,
 } from "lucide-react";
+import ThemeToggle from "@/components/theme/ThemeToggle";
 
 export type AdminView =
   | "dashboard"
@@ -172,6 +173,12 @@ export default function AdminSidebar({
             </div>
           </div>
         )}
+
+        {/* Theme Mode Switcher */}
+        <div className="flex items-center justify-between py-2 mb-2 px-1 border-t border-slate-200">
+          <span className="text-[11px] font-semibold text-slate-500">Theme</span>
+          <ThemeToggle showLabel={true} />
+        </div>
 
         <button
           onClick={handleLogout}

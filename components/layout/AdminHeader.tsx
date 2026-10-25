@@ -10,6 +10,7 @@ import {
   User,
 } from "lucide-react";
 import type { AdminView } from "./AdminSidebar";
+import ThemeToggle from "@/components/theme/ThemeToggle";
 
 interface AdminHeaderProps {
   activeView: AdminView;
@@ -61,6 +62,9 @@ export default function AdminHeader({ activeView }: AdminHeaderProps) {
       </div>
 
       <div className="flex items-center gap-3">
+        {/* White / Black Theme Toggle Icon */}
+        <ThemeToggle showLabel={false} />
+
         {/* Backend Gateway indicator */}
         <div className="hidden sm:flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs text-slate-600">
           <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
