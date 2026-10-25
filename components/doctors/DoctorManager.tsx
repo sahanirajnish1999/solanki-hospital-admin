@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
+import Dropdown, { DropdownOption } from "@/components/common/Dropdown";
 import {
   useGetDoctorListQuery,
   useVerifyDoctorMutation,
@@ -85,7 +86,47 @@ export default function DoctorManager() {
     Rejected: 0,
   };
   const pagination = doctorListResponse?.Data?.Pagination;
-  const specializations = specializationsResponse?.Data || [];
+  const specializations = useMemo(
+    () => specializationsResponse?.Data || [],
+    [specializationsResponse?.Data]
+  );
+
+  const specializationOptions: DropdownOption[] = useMemo(
+    () => [
+      { value: "", label: "All Specializations" },
+      ...specializations.map((spec) => ({
+        value: spec.Name,
+        label: spec.Name,
+        sublabel: spec.Description || undefined,
+      })),
+    ],
+    [specializations]
+  );
+
+  const statusOptions: DropdownOption[] = useMemo(
+    () => [
+      { value: "all", label: "All Verification Statuses" },
+      {
+        value: "pending",
+        label: "Pending Verification",
+        badge: "Pending",
+        badgeColor: "bg-amber-100 text-amber-800",
+      },
+      {
+        value: "approved",
+        label: "Approved",
+        badge: "Approved",
+        badgeColor: "bg-emerald-100 text-emerald-800",
+      },
+      {
+        value: "rejected",
+        label: "Rejected",
+        badge: "Rejected",
+        badgeColor: "bg-rose-100 text-rose-800",
+      },
+    ],
+    []
+  );
 
   // Filter client-side by specialization if selected
   const filteredDoctors = selectedSpecialization
@@ -238,35 +279,28 @@ export default function DoctorManager() {
 
         {/* Specialization Filter */}
         <div>
-          <select
+          <Dropdown
+            options={specializationOptions}
             value={selectedSpecialization}
-            onChange={(e) => setSelectedSpecialization(e.target.value)}
-            className="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 px-3 text-xs font-semibold text-slate-700 outline-none transition focus:border-blue-600 focus:bg-white"
-          >
-            <option value="">All Specializations</option>
-            {specializations.map((spec) => (
-              <option key={spec._id || spec.Id} value={spec.Name}>
-                {spec.Name}
-              </option>
-            ))}
-          </select>
+            onChange={(val) => setSelectedSpecialization(val)}
+            placeholder="All Specializations"
+            searchable
+            clearable
+          />
         </div>
 
         {/* Status Filter Dropdown */}
         <div>
-          <select
+          <Dropdown
+            options={statusOptions}
             value={statusFilter}
-            onChange={(e) => {
-              setStatusFilter(e.target.value as DoctorVerificationStatus | "all");
+            onChange={(val) => {
+              setStatusFilter((val || "all") as DoctorVerificationStatus | "all");
               setPage(1);
             }}
-            className="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 px-3 text-xs font-semibold text-slate-700 outline-none transition focus:border-blue-600 focus:bg-white"
-          >
-            <option value="all">All Verification Statuses</option>
-            <option value="pending">Pending Verification</option>
-            <option value="approved">Approved</option>
-            <option value="rejected">Rejected</option>
-          </select>
+            placeholder="All Verification Statuses"
+            showBadgeInTrigger
+          />
         </div>
       </div>
 

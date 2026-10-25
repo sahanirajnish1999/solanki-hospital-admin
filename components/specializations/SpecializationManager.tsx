@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo, useEffect } from "react";
+import Dropdown, { DropdownOption } from "@/components/common/Dropdown";
 import {
   useGetAllSpecializationsQuery,
   useCreateSpecializationMutation,
@@ -27,9 +28,41 @@ import {
 export default function SpecializationManager() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+
+  const statusOptions: DropdownOption[] = useMemo(
+    () => [
+      { value: "all", label: "All Specialties" },
+      {
+        value: "active",
+        label: "Active Only",
+        badge: "Active",
+        badgeColor: "bg-emerald-100 text-emerald-800",
+      },
+      {
+        value: "inactive",
+        label: "Inactive Only",
+        badge: "Inactive",
+        badgeColor: "bg-slate-100 text-slate-700",
+      },
+    ],
+    []
+  );
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [editingSpec, setEditingSpec] = useState<ISpecialization | null>(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+
+  // Close modal on Escape
+  useEffect(() => {
+    if (!isAddModalOpen && !editingSpec) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setIsAddModalOpen(false);
+        setEditingSpec(null);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isAddModalOpen, editingSpec]);
   const [feedback, setFeedback] = useState<{
     type: "success" | "error";
     text: string;
@@ -278,17 +311,13 @@ export default function SpecializationManager() {
           />
         </div>
 
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-semibold text-slate-500">Status:</span>
-          <select
+        <div className="min-w-[190px]">
+          <Dropdown
+            options={statusOptions}
             value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="rounded-xl border border-slate-200 bg-slate-50 py-2 px-3 text-xs font-semibold text-slate-700 outline-none transition focus:border-blue-600 focus:bg-white"
-          >
-            <option value="all">All Specialties</option>
-            <option value="active">Active Only</option>
-            <option value="inactive">Inactive Only</option>
-          </select>
+            onChange={(val) => setStatusFilter(val || "all")}
+            showBadgeInTrigger
+          />
         </div>
       </div>
 
@@ -440,26 +469,52 @@ export default function SpecializationManager() {
 
       {/* Add / Edit Specialization Modal */}
       {(isAddModalOpen || editingSpec) && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-xs">
-          <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 className="text-base font-bold text-slate-900">
-                {editingSpec
-                  ? "Edit Specialization"
-                  : "Add New Specialization"}
-              </h3>
+        <div
+          onClick={() => {
+            setIsAddModalOpen(false);
+            setEditingSpec(null);
+          }}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs transition-opacity duration-200 animate-in fade-in"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="w-full max-w-md overflow-hidden rounded-3xl border border-slate-200/90 bg-white shadow-2xl transition-all duration-200 animate-in zoom-in-95"
+          >
+            {/* Top Accent Bar */}
+            <div className="h-1.5 w-full bg-gradient-to-r from-[#008ba3] via-teal-500 to-cyan-400" />
+
+            <div className="flex items-center justify-between border-b border-slate-100 px-6 py-4">
+              <div className="flex items-center gap-3">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-50 to-teal-50 text-[#008ba3] border border-[#008ba3]/20 shadow-2xs">
+                  <Activity className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-slate-900">
+                    {editingSpec
+                      ? "Edit Specialization"
+                      : "Add New Specialization"}
+                  </h3>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    {editingSpec
+                      ? "Update department details and status"
+                      : "Create a new medical specialty"}
+                  </p>
+                </div>
+              </div>
               <button
+                type="button"
                 onClick={() => {
                   setIsAddModalOpen(false);
                   setEditingSpec(null);
                 }}
-                className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+                aria-label="Close modal"
+                className="flex h-8 w-8 items-center justify-center rounded-full text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 cursor-pointer"
               >
-                <X className="h-5 w-5" />
+                <X className="h-4 w-4" />
               </button>
             </div>
 
-            <form onSubmit={handleSave} className="mt-4 space-y-4">
+            <form onSubmit={handleSave} className="px-6 py-4 space-y-4">
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
                   Specialization Name *
@@ -549,16 +604,23 @@ export default function SpecializationManager() {
                     setIsAddModalOpen(false);
                     setEditingSpec(null);
                   }}
-                  className="rounded-xl border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100"
+                  className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-semibold text-slate-700 shadow-2xs transition-all hover:bg-slate-50 hover:border-slate-300 cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isCreating || isUpdating}
-                  className="rounded-xl bg-blue-600 px-5 py-2 text-xs font-semibold text-white shadow-sm hover:bg-blue-700 disabled:opacity-50"
+                  className="inline-flex items-center gap-2 rounded-xl bg-[#008ba3] hover:bg-[#007a8f] px-5 py-2.5 text-xs font-bold text-white shadow-sm transition-all hover:shadow cursor-pointer disabled:opacity-50"
                 >
-                  {isCreating || isUpdating ? "Saving..." : "Save Specialization"}
+                  {isCreating || isUpdating ? (
+                    <>
+                      <div className="h-3 w-3 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                      <span>Saving...</span>
+                    </>
+                  ) : (
+                    <span>Save Specialization</span>
+                  )}
                 </button>
               </div>
             </form>

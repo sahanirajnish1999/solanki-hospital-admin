@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo, useEffect } from "react";
+import Dropdown, { DropdownOption } from "@/components/common/Dropdown";
 import { useCreateDoctorMutation } from "@/redux/api/doctorApi";
 import { useGetAllSpecializationsQuery } from "@/redux/api/specializationApi";
 import { getErrorMessage } from "@/redux";
@@ -15,6 +16,9 @@ import {
   Eye,
   EyeOff,
   AlertCircle,
+  Calendar,
+  Clock,
+  Sparkles,
 } from "lucide-react";
 
 interface CreateDoctorModalProps {
@@ -34,9 +38,9 @@ export default function CreateDoctorModal({
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [specializationId, setSpecializationId] = useState("");
-  const [consultationFee, setConsultationFee] = useState<number>(500);
-  const [availableDays, setAvailableDays] = useState("Mon - Fri");
-  const [availableTime, setAvailableTime] = useState("9:00 AM - 4:00 PM");
+  const [consultationFee, setConsultationFee] = useState<number | "">("");
+  const [availableDays, setAvailableDays] = useState<string>("");
+  const [availableTime, setAvailableTime] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
 
   const { data: specializationsResponse } = useGetAllSpecializationsQuery({
@@ -44,7 +48,30 @@ export default function CreateDoctorModal({
   });
   const [createDoctorApi, { isLoading }] = useCreateDoctorMutation();
 
-  const specializations = specializationsResponse?.Data || [];
+  const specializations = useMemo(
+    () => specializationsResponse?.Data || [],
+    [specializationsResponse?.Data],
+  );
+
+  const specializationOptions: DropdownOption[] = useMemo(
+    () =>
+      specializations.map((spec) => ({
+        value: spec._id || spec.Id || "",
+        label: spec.Name,
+        sublabel: spec.Description || undefined,
+      })),
+    [specializations],
+  );
+
+  // Close on Escape key press
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
@@ -59,7 +86,9 @@ export default function CreateDoctorModal({
       !password ||
       !specializationId
     ) {
-      setError("Please complete all required fields (*) including specialization.");
+      setError(
+        "Please complete all required fields (*) including specialization.",
+      );
       return;
     }
 
@@ -70,9 +99,9 @@ export default function CreateDoctorModal({
         Phone: phone.trim(),
         Password: password,
         SpecializationId: specializationId,
-        ConsultationFee: Number(consultationFee) || 500,
-        AvailableDays: availableDays.trim() || "Mon - Fri",
-        AvailableTime: availableTime.trim() || "9:00 AM - 4:00 PM",
+        ConsultationFee: Number(consultationFee) || 0,
+        AvailableDays: availableDays.trim(),
+        AvailableTime: availableTime.trim(),
       }).unwrap();
 
       onSuccess(
@@ -80,12 +109,15 @@ export default function CreateDoctorModal({
           `Doctor ${name} registered successfully! Credentials saved.`,
       );
 
-      // Reset
+      // Reset form
       setName("");
       setEmail("");
       setPhone("");
       setPassword("");
       setSpecializationId("");
+      setConsultationFee("");
+      setAvailableDays("");
+      setAvailableTime("");
       onClose();
     } catch (err: unknown) {
       setError(getErrorMessage(err, "Failed to register doctor."));
@@ -93,205 +125,249 @@ export default function CreateDoctorModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs">
-      <div className="w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl">
-        <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-          <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-100 text-blue-700">
-              <Stethoscope className="h-4 w-4" />
+    <div
+      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/60 p-4 backdrop-blur-xs transition-opacity duration-200 animate-in fade-in"
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="relative w-full max-w-xl rounded-3xl border border-slate-200/90 bg-white shadow-2xl transition-all duration-200 animate-in zoom-in-95"
+      >
+        {/* Top Gradient Accent Bar */}
+        <div className="h-1.5 w-full bg-gradient-to-r from-[#008ba3] via-teal-500 to-cyan-400 rounded-t-3xl" />
+
+        {/* Modal Header */}
+        <div className="flex items-center justify-between border-b border-slate-100 px-6 py-4">
+          <div className="flex items-center gap-3">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-50 to-teal-50 text-[#008ba3] border border-[#008ba3]/20 shadow-2xs">
+              <Stethoscope className="h-5 w-5" />
             </div>
             <div>
-              <h3 className="text-base font-bold text-slate-900">
-                Register New Doctor
-              </h3>
-              <p className="text-[11px] text-slate-500">
-                POST /v1/api/doctor/create
+              <div className="flex items-center gap-2">
+                <h3 className="text-base font-bold text-slate-900">
+                  Register New Doctor
+                </h3>
+                <span className="inline-flex items-center gap-1 rounded-full bg-cyan-50 px-2 py-0.5 text-[10px] font-semibold text-[#008ba3] border border-cyan-200/60">
+                  <Sparkles className="h-2.5 w-2.5" />
+                  Onboarding
+                </span>
+              </div>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Add medical practitioner credentials and clinical availability
               </p>
             </div>
           </div>
           <button
+            type="button"
             onClick={onClose}
-            className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+            aria-label="Close modal"
+            className="flex h-8 w-8 items-center justify-center rounded-full text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 cursor-pointer"
           >
-            <X className="h-5 w-5" />
+            <X className="h-4 w-4" />
           </button>
         </div>
 
+        {/* Error Alert */}
         {error && (
-          <div className="mt-3.5 flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 p-3 text-xs text-red-700">
-            <AlertCircle className="h-4 w-4 shrink-0 text-red-600" />
-            <span>{error}</span>
+          <div className="mx-6 mt-4 flex items-center gap-2.5 rounded-xl border border-rose-200 bg-rose-50/80 p-3 text-xs text-rose-700">
+            <AlertCircle className="h-4 w-4 shrink-0 text-rose-600" />
+            <span className="font-medium">{error}</span>
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="mt-4 space-y-3.5">
-          <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1">
-              Doctor Full Name *
-            </label>
-            <div className="relative">
-              <User className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="e.g. Dr. Sunita Rao"
-                required
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-xs text-slate-900 outline-none focus:border-blue-600 focus:bg-white"
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {/* Form Body */}
+        <form onSubmit={handleSubmit}>
+          <div className="px-6 py-4 space-y-4">
+            {/* Section 1: Doctor Profile Information */}
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1">
-                Email Address *
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">
+                Personal &amp; Contact Details
               </label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="doctor@solankihospital.com"
-                  required
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-xs text-slate-900 outline-none focus:border-blue-600 focus:bg-white"
-                />
+
+              {/* Full Name */}
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  Doctor Full Name <span className="text-rose-500">*</span>
+                </label>
+                <div className="relative flex items-center">
+                  <User className="absolute left-3.5 h-4 w-4 text-slate-400" />
+                  <input
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Name"
+                    required
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50/70 py-2.5 pl-10 pr-3.5 text-xs text-slate-900 placeholder:text-slate-400 outline-none transition-all duration-150 focus:border-[#008ba3] focus:bg-white focus:ring-3 focus:ring-[#008ba3]/10"
+                  />
+                </div>
+              </div>
+
+              {/* Email & Phone */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    Email Address <span className="text-rose-500">*</span>
+                  </label>
+                  <div className="relative flex items-center">
+                    <Mail className="absolute left-3.5 h-4 w-4 text-slate-400" />
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="Email"
+                      required
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50/70 py-2.5 pl-10 pr-3.5 text-xs text-slate-900 placeholder:text-slate-400 outline-none transition-all duration-150 focus:border-[#008ba3] focus:bg-white focus:ring-3 focus:ring-[#008ba3]/10"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    Phone Number <span className="text-rose-500">*</span>
+                  </label>
+                  <div className="relative flex items-center">
+                    <Phone className="absolute left-3.5 h-4 w-4 text-slate-400" />
+                    <input
+                      type="tel"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      placeholder="Phone Number"
+                      required
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50/70 py-2.5 pl-10 pr-3.5 text-xs text-slate-900 placeholder:text-slate-400 outline-none transition-all duration-150 focus:border-[#008ba3] focus:bg-white focus:ring-3 focus:ring-[#008ba3]/10"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Password & Specialization */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3 relative z-30">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    Temporary Password <span className="text-rose-500">*</span>
+                  </label>
+                  <div className="relative flex items-center">
+                    <Lock className="absolute left-3.5 h-4 w-4 text-slate-400" />
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Password"
+                      required
+                      minLength={6}
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50/70 py-2.5 pl-10 pr-10 text-xs text-slate-900 placeholder:text-slate-400 outline-none transition-all duration-150 focus:border-[#008ba3] focus:bg-white focus:ring-3 focus:ring-[#008ba3]/10"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 text-slate-400 hover:text-slate-600 cursor-pointer"
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <Dropdown
+                    label="Clinical Specialization"
+                    labelClassName="text-xs font-semibold text-slate-700 mb-1"
+                    required
+                    options={specializationOptions}
+                    value={specializationId}
+                    onChange={(val) => setSpecializationId(val)}
+                    placeholder="Select Specialization..."
+                    searchable
+                    clearable
+                    leadingIcon={<Stethoscope className="h-4 w-4" />}
+                  />
+                </div>
               </div>
             </div>
 
-            <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1">
-                Phone Number *
+            {/* Section 2: Clinical Practice & Schedule */}
+            <div className="pt-2 relative z-10">
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">
+                Consultation Fee &amp; Schedule
               </label>
-              <div className="relative">
-                <Phone className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
-                <input
-                  type="tel"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  placeholder="9876543211"
-                  required
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-xs text-slate-900 outline-none focus:border-blue-600 focus:bg-white"
-                />
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    Fee (₹)
+                  </label>
+                  <div className="relative flex items-center">
+                    <IndianRupee className="absolute left-3.5 h-4 w-4 text-slate-400" />
+                    <input
+                      type="number"
+                      value={consultationFee}
+                      onChange={(e) =>
+                        setConsultationFee(
+                          e.target.value === "" ? "" : Number(e.target.value)
+                        )
+                      }
+                      placeholder="0"
+                      min={0}
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50/70 py-2.5 pl-10 pr-3.5 text-xs text-slate-900 placeholder:text-slate-400 outline-none transition-all duration-150 focus:border-[#008ba3] focus:bg-white focus:ring-3 focus:ring-[#008ba3]/10"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    Available Days
+                  </label>
+                  <div className="relative flex items-center">
+                    <Calendar className="absolute left-3.5 h-4 w-4 text-slate-400" />
+                    <input
+                      type="text"
+                      value={availableDays}
+                      onChange={(e) => setAvailableDays(e.target.value)}
+                      placeholder="Mon - Fri"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50/70 py-2.5 pl-10 pr-3.5 text-xs text-slate-900 placeholder:text-slate-400 outline-none transition-all duration-150 focus:border-[#008ba3] focus:bg-white focus:ring-3 focus:ring-[#008ba3]/10"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    Available Time
+                  </label>
+                  <div className="relative flex items-center">
+                    <Clock className="absolute left-3.5 h-4 w-4 text-slate-400" />
+                    <input
+                      type="text"
+                      value={availableTime}
+                      onChange={(e) => setAvailableTime(e.target.value)}
+                      placeholder="9:00 AM - 4:00 PM"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50/70 py-2.5 pl-10 pr-3.5 text-xs text-slate-900 placeholder:text-slate-400 outline-none transition-all duration-150 focus:border-[#008ba3] focus:bg-white focus:ring-3 focus:ring-[#008ba3]/10"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1">
-                Password *
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
-                <input
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="DoctorSecret@2026"
-                  required
-                  minLength={6}
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pl-9 pr-8 text-xs text-slate-900 outline-none focus:border-blue-600 focus:bg-white"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-2.5 top-2 text-slate-400 hover:text-slate-600"
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-3.5 w-3.5" />
-                  ) : (
-                    <Eye className="h-3.5 w-3.5" />
-                  )}
-                </button>
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1">
-                Clinical Specialization *
-              </label>
-              <select
-                value={specializationId}
-                onChange={(e) => setSpecializationId(e.target.value)}
-                required
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 px-3 text-xs font-semibold text-slate-700 outline-none focus:border-blue-600 focus:bg-white"
-              >
-                <option value="">Select Specialization...</option>
-                {specializations.map((spec) => (
-                  <option
-                    key={spec._id || spec.Id}
-                    value={spec._id || spec.Id || ""}
-                  >
-                    {spec.Name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
-            <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1">
-                Consultation Fee (₹)
-              </label>
-              <div className="relative">
-                <IndianRupee className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
-                <input
-                  type="number"
-                  value={consultationFee}
-                  onChange={(e) => setConsultationFee(Number(e.target.value))}
-                  min={0}
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pl-8 pr-3 text-xs text-slate-900 outline-none focus:border-blue-600 focus:bg-white"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1">
-                Available Days
-              </label>
-              <input
-                type="text"
-                value={availableDays}
-                onChange={(e) => setAvailableDays(e.target.value)}
-                placeholder="Mon - Fri"
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 px-3 text-xs text-slate-900 outline-none focus:border-blue-600 focus:bg-white"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1">
-                Available Time
-              </label>
-              <input
-                type="text"
-                value={availableTime}
-                onChange={(e) => setAvailableTime(e.target.value)}
-                placeholder="9:00 AM - 4:00 PM"
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 px-3 text-xs text-slate-900 outline-none focus:border-blue-600 focus:bg-white"
-              />
-            </div>
-          </div>
-
-          <div className="mt-5 flex justify-end gap-2 border-t border-slate-100 pt-4">
+          {/* Modal Footer */}
+          <div className="flex items-center justify-end gap-2.5 border-t border-slate-100 bg-slate-50/60 px-6 py-3.5 rounded-b-3xl relative z-0">
             <button
               type="button"
               onClick={onClose}
-              className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50"
+              className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-semibold text-slate-700 shadow-2xs transition-all hover:bg-slate-50 hover:border-slate-300 cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isLoading}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600 px-5 py-2 text-xs font-bold text-white shadow-sm hover:bg-blue-700 disabled:opacity-50"
+              className="inline-flex items-center gap-2 rounded-xl bg-[#008ba3] hover:bg-[#007a8f] px-5 py-2.5 text-xs font-bold text-white shadow-sm transition-all hover:shadow cursor-pointer disabled:opacity-50"
             >
               {isLoading ? (
                 <>
                   <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                  <span>Registering...</span>
+                  <span>Registering Doctor...</span>
                 </>
               ) : (
                 <span>Register Doctor</span>

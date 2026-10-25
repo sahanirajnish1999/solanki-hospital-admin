@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
+import Dropdown, { DropdownOption } from "@/components/common/Dropdown";
 import {
   useLoginMutation,
   useSignupMutation,
@@ -40,6 +41,24 @@ export default function AuthForms() {
   const [signupPassword, setSignupPassword] = useState("");
   const [signupPhone, setSignupPhone] = useState("");
   const [signupRole, setSignupRole] = useState<AdminRole>("admin");
+
+  const roleOptions: DropdownOption[] = useMemo(
+    () => [
+      {
+        value: "admin",
+        label: "Admin",
+        badge: "Staff",
+        badgeColor: "bg-blue-50 text-blue-700",
+      },
+      {
+        value: "superadmin",
+        label: "Superadmin",
+        badge: "Full Access",
+        badgeColor: "bg-purple-50 text-purple-700",
+      },
+    ],
+    []
+  );
   const [signupImageBase64, setSignupImageBase64] = useState<string>("");
   const [signupError, setSignupError] = useState<string | null>(null);
   const [signupSuccess, setSignupSuccess] = useState<string | null>(null);
@@ -351,20 +370,15 @@ export default function AuthForms() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
-                  Assigned Role
-                </label>
-                <div className="relative">
-                  <Shield className="absolute left-3.5 top-3.5 h-4 w-4 text-slate-400" />
-                  <select
-                    value={signupRole}
-                    onChange={(e) => setSignupRole(e.target.value as AdminRole)}
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50/70 py-2.5 pl-10 pr-4 text-sm text-slate-900 outline-none transition focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-100"
-                  >
-                    <option value="admin">Admin</option>
-                    <option value="superadmin">Superadmin</option>
-                  </select>
-                </div>
+                <Dropdown
+                  label="Assigned Role"
+                  labelClassName="text-xs uppercase tracking-wider text-slate-700 mb-1.5"
+                  leadingIcon={<Shield className="h-4 w-4" />}
+                  options={roleOptions}
+                  value={signupRole}
+                  onChange={(val) => setSignupRole(val as AdminRole)}
+                  showBadgeInTrigger
+                />
                 <p className="mt-1 text-[11px] text-slate-400">
                   First admin registered is auto-promoted to superadmin.
                 </p>

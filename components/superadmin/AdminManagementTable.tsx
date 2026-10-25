@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
+import Dropdown, { DropdownOption } from "@/components/common/Dropdown";
 import {
   useGetAllAdminsQuery,
   useUpdateAdminStatusMutation,
@@ -28,6 +29,24 @@ export default function AdminManagementTable() {
     type: "success" | "error";
     text: string;
   } | null>(null);
+
+  const roleOptions: DropdownOption[] = useMemo(
+    () => [
+      {
+        value: "admin",
+        label: "Admin",
+        badge: "Staff",
+        badgeColor: "bg-blue-50 text-blue-700",
+      },
+      {
+        value: "superadmin",
+        label: "Superadmin",
+        badge: "Superadmin",
+        badgeColor: "bg-purple-50 text-purple-700",
+      },
+    ],
+    []
+  );
 
   const {
     data: adminsResponse,
@@ -177,8 +196,8 @@ export default function AdminManagementTable() {
       )}
 
       {/* Table */}
-      <div className="mt-6 overflow-hidden rounded-xl border border-slate-200">
-        <div className="overflow-x-auto">
+      <div className="mt-6 rounded-xl border border-slate-200">
+        <div className="overflow-x-auto min-h-[300px]">
           <table className="w-full text-left text-xs">
             <thead className="border-b border-slate-200 bg-slate-50 text-slate-600">
               <tr>
@@ -266,20 +285,18 @@ export default function AdminManagementTable() {
 
                       {/* Role */}
                       <td className="px-4 py-3.5">
-                        <select
+                        <Dropdown
+                          options={roleOptions}
                           value={admin.Role}
                           disabled={isSelf || isUpdatingStatus}
-                          onChange={(e) =>
-                            handleChangeRole(
-                              adminId,
-                              e.target.value as AdminRole
-                            )
+                          onChange={(val) =>
+                            handleChangeRole(adminId, val as AdminRole)
                           }
-                          className="rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs font-semibold outline-none transition focus:border-purple-500 disabled:opacity-60 text-slate-800"
-                        >
-                          <option value="admin">Admin</option>
-                          <option value="superadmin">Superadmin</option>
-                        </select>
+                          className="w-36"
+                          triggerClassName="py-1 px-2.5 text-xs rounded-lg"
+                          dropdownClassName="w-40"
+                          placement="auto"
+                        />
                       </td>
 
                       {/* Status */}

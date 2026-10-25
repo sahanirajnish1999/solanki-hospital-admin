@@ -10,15 +10,41 @@ import AdminManagementTable from "@/components/superadmin/AdminManagementTable";
 import ProfileCard from "@/components/profile/ProfileCard";
 import AuthForms from "@/components/auth/AuthForms";
 import ThemeToggle from "@/components/theme/ThemeToggle";
+import AppLoader from "@/components/common/AppLoader";
 import { useAppSelector } from "@/redux/hooks";
 import { ShieldCheck, Hospital, Zap, Lock } from "lucide-react";
 
 export default function Home() {
-  const { isAuthenticated, isSuperAdmin } = useAppSelector(
+  const { isAuthenticated, isSuperAdmin, isInitialized } = useAppSelector(
     (state) => state.auth
   );
-  const [activeView, setActiveView] = useState<AdminView>("dashboard");
+  // Restore previous active view after page reload
+  const [activeView, setActiveView] = useState<AdminView>(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("admin_active_view") as AdminView | null;
+      if (
+        saved &&
+        ["dashboard", "specializations", "doctors", "admins", "profile"].includes(saved)
+      ) {
+        return saved;
+      }
+    }
+    return "dashboard";
+  });
 
+  const handleSetActiveView = (view: AdminView) => {
+    setActiveView(view);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("admin_active_view", view);
+    }
+  };
+
+  // 1. Show smooth medical session loader while verifying local credentials on page load
+  if (!isInitialized) {
+    return <AppLoader message="Verifying secure session..." />;
+  }
+
+  // 2. Main Application Flow
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans transition-colors duration-200">
       {!isAuthenticated ? (
@@ -34,7 +60,7 @@ export default function Home() {
               Solanki Hospital Medical Console
             </span>
             <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">
-              Admin & Medical Portal
+              Admin &amp; Medical Portal
             </h1>
             <p className="mt-1.5 text-xs text-slate-500">
               Manage clinical specialties, doctors, staff permissions, and hospital operations.
@@ -51,7 +77,7 @@ export default function Home() {
             </span>
             <span className="flex items-center gap-1 rounded-md bg-white px-2.5 py-1 border border-slate-200 shadow-2xs">
               <Hospital className="h-3 w-3 text-blue-500" />
-              Doctor & Specialization APIs Ready
+              Doctor &amp; Specialization APIs Ready
             </span>
             <span className="flex items-center gap-1 rounded-md bg-white px-2.5 py-1 border border-slate-200 shadow-2xs">
               <Lock className="h-3 w-3 text-emerald-500" />
@@ -65,7 +91,7 @@ export default function Home() {
           {/* Left Sidebar */}
           <AdminSidebar
             activeView={activeView}
-            setActiveView={setActiveView}
+            setActiveView={handleSetActiveView}
           />
 
           {/* Main Content Area */}
@@ -76,7 +102,7 @@ export default function Home() {
             {/* Dynamic View Body */}
             <main className="flex-1 p-6 max-w-7xl w-full mx-auto">
               {activeView === "dashboard" && (
-                <DashboardOverview setActiveView={setActiveView} />
+                <DashboardOverview setActiveView={handleSetActiveView} />
               )}
 
               {activeView === "specializations" && <SpecializationManager />}
@@ -93,7 +119,7 @@ export default function Home() {
                 <div className="space-y-6 max-w-4xl mx-auto">
                   <div>
                     <h2 className="text-xl font-bold text-slate-900">
-                      My Profile & Account Security
+                      My Profile &amp; Account Security
                     </h2>
                     <p className="text-xs text-slate-500">
                       View and manage your administrator contact information and password
@@ -109,3 +135,4 @@ export default function Home() {
     </div>
   );
 }
+
