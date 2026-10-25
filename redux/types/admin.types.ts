@@ -98,6 +98,7 @@ export interface AuthState {
   isAuthenticated: boolean;
   isSuperAdmin: boolean;
   isLoading: boolean;
+  isInitialized: boolean;
   error: string | null;
 }
 

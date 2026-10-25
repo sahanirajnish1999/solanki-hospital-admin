@@ -2,7 +2,7 @@
 
 import React from "react";
 import { useGetAllSpecializationsQuery } from "@/redux/api/specializationApi";
-import { useGetPublicDoctorsQuery } from "@/redux/api/doctorApi";
+import { useGetDoctorListQuery } from "@/redux/api/doctorApi";
 import { useGetAllAdminsQuery } from "@/redux/api/adminApi";
 import { useAppSelector } from "@/redux/hooks";
 import { getAdminImageUrl } from "@/redux/utils/imageHelper";
@@ -29,14 +29,16 @@ export default function DashboardOverview({
   const { isSuperAdmin, admin } = useAppSelector((state) => state.auth);
 
   const { data: specData } = useGetAllSpecializationsQuery({ All: true });
-  const { data: docData } = useGetPublicDoctorsQuery({ Limit: 5 });
+  const { data: docData } = useGetDoctorListQuery({ limit: 5 });
   const { data: adminData } = useGetAllAdminsQuery(undefined, {
     skip: !isSuperAdmin,
   });
 
   const specializations = specData?.Data || [];
   const doctors = docData?.Data?.Doctors || [];
-  const totalDoctors = docData?.Data?.Pagination?.Total || doctors.length;
+  const totalDoctors =
+    docData?.Data?.Summary?.Total ??
+    (docData?.Data?.Pagination?.Total || doctors.length);
   const onlineDoctorsCount = doctors.filter((d) => d.IsOnline).length;
   const totalAdmins = adminData?.Pagination?.Total || 1;
 

@@ -8,6 +8,7 @@ const initialState: AuthState = {
   isAuthenticated: false,
   isSuperAdmin: false,
   isLoading: false,
+  isInitialized: false,
   error: null,
 };
 
@@ -22,6 +23,7 @@ export const authSlice = createSlice({
       const { token, admin } = action.payload;
       state.token = token;
       state.isAuthenticated = true;
+      state.isInitialized = true;
       if (typeof window !== "undefined") {
         localStorage.setItem("admin_token", token);
       }
@@ -46,6 +48,7 @@ export const authSlice = createSlice({
       state.admin = null;
       state.isAuthenticated = false;
       state.isSuperAdmin = false;
+      state.isInitialized = true;
       state.error = null;
       if (typeof window !== "undefined") {
         localStorage.removeItem("admin_token");
@@ -53,6 +56,7 @@ export const authSlice = createSlice({
       }
     },
     initializeAuth: (state) => {
+      state.isInitialized = true;
       if (typeof window !== "undefined") {
         const token = localStorage.getItem("admin_token");
         const adminStr = localStorage.getItem("admin_profile");
