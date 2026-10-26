@@ -64,7 +64,7 @@ const DAY_PRESET_OPTIONS: DropdownOption[] = [
   },
   {
     value: "custom",
-    label: "Custom Schedule",
+    label: "Custom...",
     sublabel: "Toggle days or type custom",
   },
 ];
@@ -238,11 +238,11 @@ export default function AvailableDaysSelector({
       } ${className}`}
     >
       {/* Label and Custom Dropdown Component */}
-      <div className="flex items-center justify-between gap-2">
-        <label className="block text-xs font-semibold text-slate-700 truncate">
+      <div className="flex items-center justify-between gap-1.5">
+        <label className="block text-xs font-semibold text-slate-700 whitespace-nowrap shrink-0">
           {label} {required && <span className="text-rose-500">*</span>}
         </label>
-        <div className="w-40 sm:w-44 shrink-0">
+        <div className="w-32 sm:w-36 shrink-0">
           <Dropdown
             options={DAY_PRESET_OPTIONS}
             value={activePreset}

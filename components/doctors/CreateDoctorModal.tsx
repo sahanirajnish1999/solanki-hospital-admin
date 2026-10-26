@@ -237,7 +237,7 @@ export default function CreateDoctorModal({
               </div>
 
               {/* Password & Specialization */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3 relative z-30">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1">
                     Temporary Password <span className="text-rose-500">*</span>
@@ -285,7 +285,7 @@ export default function CreateDoctorModal({
             </div>
 
             {/* Section 2: Clinical Practice & Schedule */}
-            <div className="pt-2 relative z-10">
+            <div className="pt-2">
               <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">
                 Consultation Fee &amp; Schedule
               </label>
@@ -330,7 +330,7 @@ export default function CreateDoctorModal({
           </div>
 
           {/* Modal Footer */}
-          <div className="flex items-center justify-end gap-2.5 border-t border-slate-100 bg-slate-50/60 px-6 py-3.5 rounded-b-3xl relative z-0">
+          <div className="flex items-center justify-end gap-2.5 border-t border-slate-100 bg-slate-50/60 px-6 py-3.5 rounded-b-3xl">
             <button
               type="button"
               onClick={onClose}

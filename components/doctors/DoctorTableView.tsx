@@ -1,14 +1,13 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import type { IDoctor } from "@/redux/types/doctor.types";
 import { getAdminImageUrl } from "@/redux";
 import {
   User,
   Calendar,
   CheckCircle2,
-  AlertCircle,
-  XCircle,
+  ChevronDown,
   SlidersHorizontal,
   Stethoscope,
   Eye,
@@ -36,8 +35,30 @@ export default function DoctorTableView({
   onManage,
   onViewProfile,
 }: DoctorTableViewProps) {
+  const [openStatusDropdownId, setOpenStatusDropdownId] = useState<string | null>(null);
+
+  // Close dropdown on click outside or escape key
+  useEffect(() => {
+    if (!openStatusDropdownId) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest("[data-status-dropdown]")) {
+        setOpenStatusDropdownId(null);
+      }
+    };
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpenStatusDropdownId(null);
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [openStatusDropdownId]);
+
   return (
-    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xs">
+    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xs min-h-[220px]">
       <table className="w-full text-left text-xs">
         {/* Table Header */}
         <thead>
@@ -102,7 +123,7 @@ export default function DoctorTableView({
               </td>
             </tr>
           ) : (
-            doctors.map((doc) => {
+            doctors.map((doc, index) => {
               const docId = doc._id || doc.Id || "";
               const vStatus =
                 doc.VerificationStatus || (doc.IsVerified ? "approved" : "pending");
@@ -110,11 +131,14 @@ export default function DoctorTableView({
               const isPending = vStatus === "pending";
               const isRejected = vStatus === "rejected";
               const isSelf = doc.RegisteredBy === "self";
+              const isNearBottom = index > 0 && index >= doctors.length - 2;
 
               return (
                 <tr
                   key={docId}
-                  className="group transition-colors duration-150 hover:bg-slate-50/70"
+                  className={`group transition-colors duration-150 hover:bg-slate-50/70 ${
+                    openStatusDropdownId === docId ? "relative z-30 bg-slate-50/50" : ""
+                  }`}
                 >
                   {/* 1. Doctor Details with Source Tag */}
                   <td className="py-3.5 pl-5 pr-3 align-middle">
@@ -209,14 +233,12 @@ export default function DoctorTableView({
                       {isApproved && (
                         <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-bold text-emerald-700 shadow-2xs">
                           <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
                           <span>Approved</span>
                         </span>
                       )}
                       {isPending && (
                         <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-xs font-bold text-amber-700 shadow-2xs">
                           <span className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse" />
-                          <AlertCircle className="h-3.5 w-3.5 text-amber-600" />
                           <span>Pending</span>
                         </span>
                       )}
@@ -224,7 +246,6 @@ export default function DoctorTableView({
                         <div className="flex flex-col items-center">
                           <span className="inline-flex items-center gap-1.5 rounded-full border border-rose-200 bg-rose-50 px-2.5 py-1 text-xs font-bold text-rose-700 shadow-2xs">
                             <span className="h-1.5 w-1.5 rounded-full bg-rose-500" />
-                            <XCircle className="h-3.5 w-3.5 text-rose-600" />
                             <span>Rejected</span>
                           </span>
                           {doc.RejectionReason && (
@@ -264,33 +285,94 @@ export default function DoctorTableView({
                   {/* 5. Actions */}
                   <td className="py-3.5 pl-3 pr-5 align-middle text-right">
                     <div className="flex items-center justify-end gap-1.5">
-                      {/* Quick Approve */}
-                      {!isApproved && (
+                      {/* Single Unified Status Dropdown Button */}
+                      <div className="relative" data-status-dropdown>
                         <button
                           type="button"
-                          onClick={() => onApprove(docId)}
                           disabled={isVerifying}
-                          className="inline-flex items-center gap-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1 text-xs font-semibold shadow-2xs transition active:scale-95 disabled:opacity-50"
-                          title="Verify and approve practitioner"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setOpenStatusDropdownId((prev) =>
+                              prev === docId ? null : docId
+                            );
+                          }}
+                          className={`inline-flex items-center gap-1 rounded-lg border px-2.5 py-1 text-xs font-semibold shadow-2xs transition active:scale-95 disabled:opacity-50 cursor-pointer ${
+                            openStatusDropdownId === docId
+                              ? "border-blue-400 bg-blue-50 text-blue-700 ring-2 ring-blue-100"
+                              : "border-slate-200 bg-white hover:bg-slate-50 text-slate-700"
+                          }`}
+                          title="Update doctor verification status"
                         >
-                          <Check className="h-3 w-3" />
-                          <span>Approve</span>
+                          <ShieldCheck className="h-3 w-3 text-slate-500" />
+                          <span>Status</span>
+                          <ChevronDown
+                            className={`h-3 w-3 text-slate-400 transition-transform duration-200 ${
+                              openStatusDropdownId === docId
+                                ? "rotate-180 text-blue-600"
+                                : ""
+                            }`}
+                          />
                         </button>
-                      )}
 
-                      {/* Quick Reject */}
-                      {!isRejected && (
-                        <button
-                          type="button"
-                          onClick={() => onReject(doc)}
-                          disabled={isVerifying}
-                          className="inline-flex items-center gap-1 rounded-lg border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 px-2 py-1 text-xs font-semibold transition active:scale-95 disabled:opacity-50"
-                          title="Reject doctor application"
-                        >
-                          <X className="h-3 w-3" />
-                          <span>Reject</span>
-                        </button>
-                      )}
+                        {/* Dropdown Menu */}
+                        {openStatusDropdownId === docId && (
+                          <div
+                            className={`absolute right-0 ${
+                              isNearBottom
+                                ? "bottom-full mb-1.5"
+                                : "top-full mt-1.5"
+                            } z-50 w-36 rounded-xl border border-slate-200 bg-white p-1 shadow-xl animate-in fade-in zoom-in-95 duration-150 text-left`}
+                          >
+                            {/* Option: Approve */}
+                            <button
+                              type="button"
+                              disabled={isVerifying || isApproved}
+                              onClick={() => {
+                                setOpenStatusDropdownId(null);
+                                onApprove(docId);
+                              }}
+                              className={`w-full flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer ${
+                                isApproved
+                                  ? "bg-emerald-50 text-emerald-800 font-semibold cursor-default"
+                                  : "text-slate-700 hover:bg-emerald-50 hover:text-emerald-700"
+                              }`}
+                              title={isApproved ? "Already Approved" : "Approve doctor"}
+                            >
+                              <div className="flex items-center gap-1.5">
+                                <Check className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+                                <span>Approve</span>
+                              </div>
+                              {isApproved && (
+                                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shrink-0" />
+                              )}
+                            </button>
+
+                            {/* Option: Reject */}
+                            <button
+                              type="button"
+                              disabled={isVerifying || isRejected}
+                              onClick={() => {
+                                setOpenStatusDropdownId(null);
+                                onReject(doc);
+                              }}
+                              className={`w-full flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer ${
+                                isRejected
+                                  ? "bg-rose-50 text-rose-800 font-semibold cursor-default"
+                                  : "text-slate-700 hover:bg-rose-50 hover:text-rose-700"
+                              }`}
+                              title={isRejected ? "Already Rejected" : "Reject doctor application"}
+                            >
+                              <div className="flex items-center gap-1.5">
+                                <X className="h-3.5 w-3.5 text-rose-600 shrink-0" />
+                                <span>Reject</span>
+                              </div>
+                              {isRejected && (
+                                <span className="h-1.5 w-1.5 rounded-full bg-rose-500 shrink-0" />
+                              )}
+                            </button>
+                          </div>
+                        )}
+                      </div>
 
                       {/* Manage Schedule & Fee */}
                       <button
