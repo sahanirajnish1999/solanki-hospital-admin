@@ -32,6 +32,7 @@ export interface DropdownProps {
   placement?: "bottom" | "top" | "auto";
   showBadgeInTrigger?: boolean;
   labelClassName?: string;
+  onOpenChange?: (isOpen: boolean) => void;
 }
 
 export default function Dropdown({
@@ -53,6 +54,7 @@ export default function Dropdown({
   variant = "default",
   placement = "auto",
   showBadgeInTrigger = false,
+  onOpenChange,
 }: DropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -61,6 +63,10 @@ export default function Dropdown({
   );
   const containerRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    onOpenChange?.(isOpen);
+  }, [isOpen, onOpenChange]);
 
   const closeDropdown = () => {
     setIsOpen(false);

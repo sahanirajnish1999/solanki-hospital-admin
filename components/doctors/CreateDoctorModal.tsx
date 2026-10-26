@@ -16,10 +16,10 @@ import {
   Eye,
   EyeOff,
   AlertCircle,
-  Calendar,
-  Clock,
   Sparkles,
 } from "lucide-react";
+import AvailableDaysSelector from "./AvailableDaysSelector";
+import AvailableTimeSelector from "./AvailableTimeSelector";
 
 interface CreateDoctorModalProps {
   isOpen: boolean;
@@ -133,9 +133,6 @@ export default function CreateDoctorModal({
         onClick={(e) => e.stopPropagation()}
         className="relative w-full max-w-xl rounded-3xl border border-slate-200/90 bg-white shadow-2xl transition-all duration-200 animate-in zoom-in-95"
       >
-        {/* Top Gradient Accent Bar */}
-        <div className="h-1.5 w-full bg-gradient-to-r from-[#008ba3] via-teal-500 to-cyan-400 rounded-t-3xl" />
-
         {/* Modal Header */}
         <div className="flex items-center justify-between border-b border-slate-100 px-6 py-4">
           <div className="flex items-center gap-3">
@@ -293,59 +290,41 @@ export default function CreateDoctorModal({
                 Consultation Fee &amp; Schedule
               </label>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    Fee (₹)
-                  </label>
-                  <div className="relative flex items-center">
-                    <IndianRupee className="absolute left-3.5 h-4 w-4 text-slate-400" />
-                    <input
-                      type="number"
-                      value={consultationFee}
-                      onChange={(e) =>
-                        setConsultationFee(
-                          e.target.value === "" ? "" : Number(e.target.value)
-                        )
-                      }
-                      placeholder="0"
-                      min={0}
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50/70 py-2.5 pl-10 pr-3.5 text-xs text-slate-900 placeholder:text-slate-400 outline-none transition-all duration-150 focus:border-[#008ba3] focus:bg-white focus:ring-3 focus:ring-[#008ba3]/10"
-                    />
-                  </div>
+              {/* Consultation Fee Input */}
+              <div className="mb-3.5 max-w-xs">
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  Consultation Fee (₹)
+                </label>
+                <div className="relative flex items-center">
+                  <IndianRupee className="absolute left-3.5 h-4 w-4 text-slate-400 pointer-events-none" />
+                  <input
+                    type="number"
+                    value={consultationFee}
+                    onChange={(e) =>
+                      setConsultationFee(
+                        e.target.value === "" ? "" : Number(e.target.value)
+                      )
+                    }
+                    placeholder="0"
+                    min={0}
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50/70 py-2.5 pl-10 pr-3.5 text-xs text-slate-900 placeholder:text-slate-400 outline-none transition-all duration-150 focus:border-[#008ba3] focus:bg-white focus:ring-3 focus:ring-[#008ba3]/10"
+                  />
                 </div>
+              </div>
 
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    Available Days
-                  </label>
-                  <div className="relative flex items-center">
-                    <Calendar className="absolute left-3.5 h-4 w-4 text-slate-400" />
-                    <input
-                      type="text"
-                      value={availableDays}
-                      onChange={(e) => setAvailableDays(e.target.value)}
-                      placeholder="Mon - Fri"
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50/70 py-2.5 pl-10 pr-3.5 text-xs text-slate-900 placeholder:text-slate-400 outline-none transition-all duration-150 focus:border-[#008ba3] focus:bg-white focus:ring-3 focus:ring-[#008ba3]/10"
-                    />
-                  </div>
-                </div>
+              {/* Symmetrical Schedule Columns: Days & Time */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                <AvailableDaysSelector
+                  value={availableDays}
+                  onChange={setAvailableDays}
+                  label="Available Days"
+                />
 
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    Available Time
-                  </label>
-                  <div className="relative flex items-center">
-                    <Clock className="absolute left-3.5 h-4 w-4 text-slate-400" />
-                    <input
-                      type="text"
-                      value={availableTime}
-                      onChange={(e) => setAvailableTime(e.target.value)}
-                      placeholder="9:00 AM - 4:00 PM"
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50/70 py-2.5 pl-10 pr-3.5 text-xs text-slate-900 placeholder:text-slate-400 outline-none transition-all duration-150 focus:border-[#008ba3] focus:bg-white focus:ring-3 focus:ring-[#008ba3]/10"
-                    />
-                  </div>
-                </div>
+                <AvailableTimeSelector
+                  value={availableTime}
+                  onChange={setAvailableTime}
+                  label="Available Time"
+                />
               </div>
             </div>
           </div>
