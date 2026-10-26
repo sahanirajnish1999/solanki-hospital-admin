@@ -6,6 +6,7 @@ import AdminHeader from "@/components/layout/AdminHeader";
 import DashboardOverview from "@/components/dashboard/DashboardOverview";
 import SpecializationManager from "@/components/specializations/SpecializationManager";
 import DoctorManager from "@/components/doctors/DoctorManager";
+import AppointmentManager from "@/components/appointments/AppointmentManager";
 import AdminManagementTable from "@/components/superadmin/AdminManagementTable";
 import ProfileCard from "@/components/profile/ProfileCard";
 import AuthForms from "@/components/auth/AuthForms";
@@ -24,7 +25,14 @@ export default function Home() {
       const saved = localStorage.getItem("admin_active_view") as AdminView | null;
       if (
         saved &&
-        ["dashboard", "specializations", "doctors", "admins", "profile"].includes(saved)
+        [
+          "dashboard",
+          "specializations",
+          "doctors",
+          "appointments",
+          "admins",
+          "profile",
+        ].includes(saved)
       ) {
         return saved;
       }
@@ -108,6 +116,8 @@ export default function Home() {
               {activeView === "specializations" && <SpecializationManager />}
 
               {activeView === "doctors" && <DoctorManager />}
+
+              {activeView === "appointments" && <AppointmentManager />}
 
               {activeView === "admins" && isSuperAdmin && (
                 <div className="space-y-4">

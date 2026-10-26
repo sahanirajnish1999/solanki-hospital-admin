@@ -33,6 +33,11 @@ export default function AdminHeader({ activeView }: AdminHeaderProps) {
       title: "Doctors Directory & Management",
       subtitle: "Medical staff profiles, online consultation status, and bookings",
     },
+    appointments: {
+      title: "Appointments & Consultation Bookings",
+      subtitle:
+        "Patient tokens, scheduled clinical slots, fees, and payment status",
+    },
     admins: {
       title: "Administrators & Access Control",
       subtitle:

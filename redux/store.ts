@@ -3,6 +3,7 @@ import { setupListeners } from "@reduxjs/toolkit/query";
 import { adminApi } from "./api/adminApi";
 import { specializationApi } from "./api/specializationApi";
 import { doctorApi } from "./api/doctorApi";
+import { appointmentApi } from "./api/appointmentApi";
 import authReducer from "./features/authSlice";
 
 export const makeStore = () => {
@@ -12,6 +13,7 @@ export const makeStore = () => {
       [adminApi.reducerPath]: adminApi.reducer,
       [specializationApi.reducerPath]: specializationApi.reducer,
       [doctorApi.reducerPath]: doctorApi.reducer,
+      [appointmentApi.reducerPath]: appointmentApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({
@@ -19,7 +21,8 @@ export const makeStore = () => {
       }).concat(
         adminApi.middleware,
         specializationApi.middleware,
-        doctorApi.middleware
+        doctorApi.middleware,
+        appointmentApi.middleware
       ),
     devTools: process.env.NODE_ENV !== "production",
   });

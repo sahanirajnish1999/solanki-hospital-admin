@@ -4,6 +4,7 @@ import React from "react";
 import { useGetAllSpecializationsQuery } from "@/redux/api/specializationApi";
 import { useGetDoctorListQuery } from "@/redux/api/doctorApi";
 import { useGetAllAdminsQuery } from "@/redux/api/adminApi";
+import { useGetAppointmentsQuery } from "@/redux/api/appointmentApi";
 import { useAppSelector } from "@/redux/hooks";
 import { getAdminImageUrl } from "@/redux/utils/imageHelper";
 import type { AdminView } from "../layout/AdminSidebar";
@@ -17,6 +18,7 @@ import {
   Star,
   CheckCircle2,
   Calendar,
+  CalendarCheck,
 } from "lucide-react";
 
 interface DashboardOverviewProps {
@@ -30,6 +32,7 @@ export default function DashboardOverview({
 
   const { data: specData } = useGetAllSpecializationsQuery({ All: true });
   const { data: docData } = useGetDoctorListQuery({ limit: 5 });
+  const { data: appointmentData } = useGetAppointmentsQuery({ Limit: 5 });
   const { data: adminData } = useGetAllAdminsQuery(undefined, {
     skip: !isSuperAdmin,
   });
@@ -41,6 +44,9 @@ export default function DashboardOverview({
     (docData?.Data?.Pagination?.Total || doctors.length);
   const onlineDoctorsCount = doctors.filter((d) => d.IsOnline).length;
   const totalAdmins = adminData?.Pagination?.Total || 1;
+  const totalAppointments =
+    appointmentData?.Data?.Pagination?.Total ??
+    (appointmentData?.Data?.Summary?.TotalAssignedPatients || 0);
 
   const stats = [
     {
@@ -56,6 +62,13 @@ export default function DashboardOverview({
       icon: Stethoscope,
       color: "text-indigo-600 bg-indigo-50 border-indigo-100",
       target: "doctors" as AdminView,
+    },
+    {
+      title: "Active Appointments",
+      value: totalAppointments,
+      icon: CalendarCheck,
+      color: "text-amber-600 bg-amber-50 border-amber-100",
+      target: "appointments" as AdminView,
     },
     {
       title: "Doctors Online Now",
@@ -117,12 +130,19 @@ export default function DashboardOverview({
               <Stethoscope className="h-4 w-4" />
               <span>Doctors Directory</span>
             </button>
+            <button
+              onClick={() => setActiveView("appointments")}
+              className="inline-flex items-center gap-1.5 rounded-xl bg-blue-500/30 border border-white/20 px-4 py-2.5 text-xs font-bold text-white backdrop-blur-xs transition hover:bg-white/20"
+            >
+              <CalendarCheck className="h-4 w-4" />
+              <span>Appointments</span>
+            </button>
           </div>
         </div>
       </div>
 
       {/* KPI Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         {stats.map((stat, idx) => {
           const Icon = stat.icon;
           return (
@@ -307,7 +327,7 @@ export default function DashboardOverview({
           </h4>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
           <div className="rounded-xl border border-slate-100 bg-slate-50/70 p-3">
             <span className="font-bold text-slate-800">Admin API</span>
             <p className="text-[11px] text-slate-500 mt-0.5">
@@ -326,6 +346,13 @@ export default function DashboardOverview({
             <span className="font-bold text-slate-800">Doctor API</span>
             <p className="text-[11px] text-slate-500 mt-0.5">
               Public directory & profiles, doctor listings, specialization filters
+            </p>
+          </div>
+
+          <div className="rounded-xl border border-slate-100 bg-slate-50/70 p-3">
+            <span className="font-bold text-slate-800">Appointment API</span>
+            <p className="text-[11px] text-slate-500 mt-0.5">
+              GET /appointment (Page, Limit, Status), tokens, slots, and single record details
             </p>
           </div>
         </div>

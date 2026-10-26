@@ -11,6 +11,7 @@ import {
   Activity,
   Users,
   UserCheck,
+  CalendarCheck,
   LogOut,
   Hospital,
   Sparkles,
@@ -22,6 +23,7 @@ export type AdminView =
   | "dashboard"
   | "specializations"
   | "doctors"
+  | "appointments"
   | "admins"
   | "profile";
 
@@ -66,6 +68,12 @@ export default function AdminSidebar({
       label: "Doctors Directory",
       icon: Stethoscope,
       desc: "Medical practitioners",
+    },
+    {
+      id: "appointments" as AdminView,
+      label: "Appointments",
+      icon: CalendarCheck,
+      desc: "Patient bookings & slots",
     },
     ...(isSuperAdmin
       ? [
