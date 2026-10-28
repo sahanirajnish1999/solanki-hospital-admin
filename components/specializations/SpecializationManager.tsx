@@ -361,19 +361,19 @@ export default function SpecializationManager() {
               onClick={() => setStatusFilter(c.key)}
               className={`flex items-center justify-between rounded-xl border p-3 sm:p-3.5 text-left transition-all duration-150 cursor-pointer ${
                 isActive
-                  ? "border-slate-800 bg-slate-50/90 shadow-2xs ring-1 ring-slate-800/10"
-                  : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/50"
+                  ? "border-slate-800 bg-slate-50/90 shadow-2xs ring-1 ring-slate-800/10 dark:border-slate-700 dark:bg-slate-800/90 dark:ring-slate-700/50"
+                  : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/50 dark:border-slate-800 dark:bg-slate-900/40 dark:hover:border-slate-700 dark:hover:bg-slate-800/50"
               }`}
             >
               <div>
                 <div className="flex items-center gap-1.5">
                   <span className={`h-1.5 w-1.5 rounded-full ${c.dotColor}`} />
-                  <span className="text-[11px] font-medium text-slate-500">
+                  <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
                     {c.label}
                   </span>
                 </div>
                 <div className="mt-1 flex items-baseline gap-2">
-                  <span className="text-lg sm:text-xl font-semibold tracking-tight text-slate-900 tabular-nums">
+                  <span className="text-lg sm:text-xl font-semibold tracking-tight text-slate-900 dark:text-slate-100 tabular-nums">
                     {c.value}
                   </span>
                 </div>
@@ -382,8 +382,8 @@ export default function SpecializationManager() {
               <div
                 className={`flex h-7.5 w-7.5 items-center justify-center rounded-lg border transition-colors ${
                   isActive
-                    ? "bg-slate-900 text-white border-slate-900"
-                    : "bg-slate-100/80 text-slate-500 border-slate-200/60"
+                    ? "bg-slate-900 text-white border-slate-900 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-100"
+                    : "bg-slate-100/80 text-slate-500 border-slate-200/60 dark:bg-slate-800/60 dark:text-slate-400 dark:border-slate-700/60"
                 }`}
               >
                 <Icon className="h-3.5 w-3.5" />
@@ -599,10 +599,10 @@ export default function SpecializationManager() {
         </div>
       ) : (
         /* Table View */
-        <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-2xs">
+        <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-2xs dark:border-slate-800 dark:bg-[#121215]">
           <table className="w-full text-left text-xs">
             <thead>
-              <tr className="border-b border-slate-200 bg-slate-50/75 text-[11px] font-medium text-slate-500 select-none">
+              <tr className="border-b border-slate-200 bg-slate-50/75 text-[11px] font-medium text-slate-500 select-none dark:border-slate-800 dark:bg-slate-900/80 dark:text-slate-400">
                 <th className="py-3 pl-5 pr-3 w-[28%] font-medium">Specialization</th>
                 <th className="py-3 px-3 w-[42%] font-medium">Clinical Overview</th>
                 <th className="py-3 px-3 text-center w-[12%] font-medium">Status</th>

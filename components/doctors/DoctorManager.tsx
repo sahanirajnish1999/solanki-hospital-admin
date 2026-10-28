@@ -164,14 +164,14 @@ export default function DoctorManager() {
       {/* Top Header */}
       <div className="flex flex-col gap-3.5 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-900 text-teal-400 shadow-2xs">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-900 text-teal-400 shadow-2xs dark:bg-slate-800 dark:border dark:border-slate-700">
             <Stethoscope className="h-4.5 w-4.5" />
           </div>
           <div>
-            <h2 className="text-base font-semibold text-slate-900 tracking-tight">
+            <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100 tracking-tight">
               Doctor Administration
             </h2>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-400 dark:text-slate-500">
               Staff registration, profile verification, and clinical schedule management
             </p>
           </div>
@@ -179,13 +179,13 @@ export default function DoctorManager() {
 
         <div className="flex items-center gap-2">
           {/* View mode toggle */}
-          <div className="flex items-center rounded-lg border border-slate-200 bg-slate-100/80 p-0.5">
+          <div className="flex items-center rounded-lg border border-slate-200 bg-slate-100/80 p-0.5 dark:border-slate-800 dark:bg-slate-900">
             <button
               onClick={() => setViewMode("table")}
               className={`rounded-md p-1.5 transition cursor-pointer ${
                 viewMode === "table"
-                  ? "bg-white text-slate-900 shadow-2xs"
-                  : "text-slate-400 hover:text-slate-700"
+                  ? "bg-white text-slate-900 shadow-2xs dark:bg-slate-800 dark:text-slate-100"
+                  : "text-slate-400 hover:text-slate-700 dark:text-slate-500 dark:hover:text-slate-300"
               }`}
               title="Table view"
             >
@@ -195,8 +195,8 @@ export default function DoctorManager() {
               onClick={() => setViewMode("cards")}
               className={`rounded-md p-1.5 transition cursor-pointer ${
                 viewMode === "cards"
-                  ? "bg-white text-slate-900 shadow-2xs"
-                  : "text-slate-400 hover:text-slate-700"
+                  ? "bg-white text-slate-900 shadow-2xs dark:bg-slate-800 dark:text-slate-100"
+                  : "text-slate-400 hover:text-slate-700 dark:text-slate-500 dark:hover:text-slate-300"
               }`}
               title="Cards view"
             >
@@ -207,12 +207,12 @@ export default function DoctorManager() {
           <button
             onClick={() => refetch()}
             disabled={isFetching}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 shadow-2xs transition hover:bg-slate-50 cursor-pointer disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 shadow-2xs transition hover:bg-slate-50 cursor-pointer disabled:opacity-50 dark:border-slate-800 dark:bg-slate-800/70 dark:text-slate-300 dark:hover:bg-slate-800"
             title="Refresh doctor list"
           >
             <RotateCw
               className={`h-3 w-3 ${
-                isFetching ? "animate-spin text-slate-900" : "text-slate-400"
+                isFetching ? "animate-spin text-slate-900 dark:text-slate-100" : "text-slate-400 dark:text-slate-500"
               }`}
             />
             <span className="hidden sm:inline">Refresh</span>
@@ -220,7 +220,7 @@ export default function DoctorManager() {
 
           <button
             onClick={() => setIsCreateModalOpen(true)}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-medium text-white shadow-2xs transition hover:bg-slate-800 cursor-pointer"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-medium text-white shadow-2xs transition hover:bg-slate-800 cursor-pointer dark:bg-slate-800 dark:hover:bg-slate-700 dark:border dark:border-slate-700"
           >
             <Plus className="h-3.5 w-3.5" />
             <span>Register Doctor</span>
@@ -265,21 +265,21 @@ export default function DoctorManager() {
       )}
 
       {/* Filter / Search Bar */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 rounded-xl border border-slate-200 bg-white p-2.5 shadow-2xs">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 rounded-xl border border-slate-200 bg-white p-2.5 shadow-2xs dark:border-slate-800 dark:bg-[#121215]">
         {/* Search */}
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 dark:text-slate-500" />
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search by doctor name, email, or phone..."
-            className="w-full rounded-lg border border-slate-200 bg-slate-50/60 py-1.5 pl-8.5 pr-8 text-xs text-slate-900 placeholder:text-slate-400 outline-none transition focus:border-slate-400 focus:bg-white"
+            className="w-full rounded-lg border border-slate-200 bg-slate-50/60 py-1.5 pl-8.5 pr-8 text-xs text-slate-900 placeholder:text-slate-400 outline-none transition focus:border-slate-400 focus:bg-white dark:border-slate-800 dark:bg-slate-900/60 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:bg-slate-900"
           />
           {searchTerm && (
             <button
               onClick={() => setSearchTerm("")}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 cursor-pointer"
               title="Clear search"
             >
               <X className="h-3 w-3" />

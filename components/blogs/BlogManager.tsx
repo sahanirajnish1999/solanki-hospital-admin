@@ -551,11 +551,11 @@ export default function BlogManager() {
         </div>
       ) : (
         /* Table View */
-        <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-2xs">
+        <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-2xs dark:border-slate-800 dark:bg-[#121215]">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead>
-                <tr className="border-b border-slate-200 bg-slate-50/75 text-[11px] font-medium text-slate-500 select-none">
+                <tr className="border-b border-slate-200 bg-slate-50/75 text-[11px] font-medium text-slate-500 select-none dark:border-slate-800 dark:bg-slate-900/80 dark:text-slate-400">
                   <th className="py-3 pl-4 pr-3 w-[30%] font-medium">Article &amp; Clinical Overview</th>
                   <th className="py-3 px-3 w-[18%] font-medium">Category</th>
                   <th className="py-3 px-3 w-[14%] font-medium">Highlights</th>

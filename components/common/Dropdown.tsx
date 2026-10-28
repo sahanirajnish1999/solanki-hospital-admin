@@ -207,17 +207,17 @@ export default function Dropdown({
                 disabled
                   ? "text-slate-400 cursor-not-allowed opacity-60"
                   : isOpen
-                  ? "bg-slate-100/90 text-slate-900"
-                  : "hover:bg-slate-50 text-slate-800"
+                  ? "bg-slate-100/90 text-slate-900 dark:bg-slate-800 dark:text-slate-100"
+                  : "hover:bg-slate-50 text-slate-800 dark:text-slate-300 dark:hover:bg-slate-800/60"
               }`
             : `px-3 py-2 rounded-xl border ${
                 disabled
-                  ? "bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed"
+                  ? "bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed dark:bg-slate-800 dark:text-slate-500 dark:border-slate-700"
                   : error
-                  ? "bg-white border-[#c62828] ring-1 ring-[#c62828]"
+                  ? "bg-white border-[#c62828] ring-1 ring-[#c62828] dark:bg-slate-900"
                   : isOpen
-                  ? "bg-white border-[#008ba3] ring-3 ring-[#008ba3]/10 shadow-xs"
-                  : "bg-slate-50/70 border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-800"
+                  ? "bg-white border-[#008ba3] ring-3 ring-[#008ba3]/10 shadow-xs dark:bg-slate-900 dark:border-[#008ba3]"
+                  : "bg-slate-50/70 border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-800 dark:bg-slate-900/60 dark:border-slate-800 dark:text-slate-200 dark:hover:bg-slate-900/80 dark:hover:border-slate-700"
               }`
         } ${triggerClassName}`}
       >
@@ -274,11 +274,11 @@ export default function Dropdown({
 
       {/* Floating Options Panel */}
       {isOpen && (
-        <div className={`absolute ${popoverPlacement === "top" ? "bottom-full mb-2" : "top-full mt-2"} left-0 right-0 z-[100] bg-white rounded-xl border border-slate-200 shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150 ${dropdownClassName}`}>
+        <div className={`absolute ${popoverPlacement === "top" ? "bottom-full mb-2" : "top-full mt-2"} left-0 right-0 z-[100] bg-white rounded-xl border border-slate-200 shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150 dark:bg-slate-900 dark:border-slate-700 ${dropdownClassName}`}>
           {/* Search Bar */}
           {searchable && (
-            <div className="p-2 border-b border-slate-100 bg-slate-50/70 flex items-center gap-2">
-              <Search className="w-4 h-4 text-slate-400 shrink-0 ml-1" />
+            <div className="p-2 border-b border-slate-100 bg-slate-50/70 flex items-center gap-2 dark:border-slate-800 dark:bg-slate-850">
+              <Search className="w-4 h-4 text-slate-400 dark:text-slate-500 shrink-0 ml-1" />
               <input
                 ref={searchInputRef}
                 type="text"
@@ -293,13 +293,13 @@ export default function Dropdown({
                   }
                 }}
                 placeholder="Search..."
-                className="w-full bg-transparent text-[12px] text-slate-900 placeholder-slate-400 outline-none"
+                className="w-full bg-transparent text-[12px] text-slate-900 placeholder-slate-400 outline-none dark:text-slate-100 dark:placeholder-slate-500"
               />
               {searchQuery && (
                 <button
                   type="button"
                   onClick={() => setSearchQuery("")}
-                  className="p-1 text-slate-400 hover:text-slate-600 cursor-pointer"
+                  className="p-1 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 cursor-pointer"
                 >
                   <X className="w-3 h-3" />
                 </button>
@@ -320,10 +320,10 @@ export default function Dropdown({
                     onClick={() => handleSelect(opt)}
                     className={`w-full px-3 py-2 rounded-lg text-left text-[13px] flex items-center justify-between transition-colors cursor-pointer ${
                       opt.disabled
-                        ? "text-slate-300 cursor-not-allowed bg-transparent"
+                        ? "text-slate-300 dark:text-slate-600 cursor-not-allowed bg-transparent"
                         : isSelected
-                        ? "bg-cyan-50 text-[#008ba3] font-bold"
-                        : "text-slate-700 hover:bg-slate-100"
+                        ? "bg-cyan-50 text-[#008ba3] font-bold dark:bg-[#008ba3]/20 dark:text-[#22d3ee]"
+                        : "text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
                     }`}
                   >
                     <div className="flex items-center gap-2.5 overflow-hidden flex-1 mr-2">

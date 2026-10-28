@@ -211,9 +211,9 @@ export default function CreateEditBlogModal({
         <div className="h-1.5 w-full bg-gradient-to-r from-teal-500 via-[#008ba3] to-cyan-500" />
 
         {/* Modal Header */}
-        <div className="flex items-center justify-between border-b border-slate-100 px-6 py-4 shrink-0 bg-gradient-to-b from-slate-50/70 to-white">
+        <div className="flex items-center justify-between border-b border-slate-100 px-6 py-4 shrink-0 bg-slate-50/70 dark:border-slate-800 dark:bg-[#161619]">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-50 to-teal-100/60 text-[#008ba3] border border-[#008ba3]/20 shadow-2xs">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-50 to-teal-100/60 text-[#008ba3] border border-[#008ba3]/20 shadow-2xs dark:from-cyan-950/40 dark:to-teal-950/60 dark:border-[#008ba3]/30">
               <BookOpen className="h-5 w-5" />
             </div>
             <div>
@@ -373,7 +373,7 @@ export default function CreateEditBlogModal({
               </div>
 
               {/* Publication Status Card */}
-              <div className="rounded-2xl border border-slate-200 bg-gradient-to-r from-slate-50/80 to-white p-3 flex items-center justify-between">
+              <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-3 flex items-center justify-between dark:border-slate-800 dark:bg-[#141418]">
                 <div>
                   <div className="flex items-center gap-1.5">
                     <span

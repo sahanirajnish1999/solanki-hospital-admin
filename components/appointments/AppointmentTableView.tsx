@@ -22,12 +22,12 @@ export default function AppointmentTableView({
   onViewDetails,
 }: AppointmentTableViewProps) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xs">
+    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xs dark:border-slate-800 dark:bg-[#121215]">
       <div className="overflow-x-auto">
         <table className="w-full min-w-[780px] text-left text-xs">
           {/* Table Header */}
           <thead>
-            <tr className="border-b border-slate-200 bg-slate-50 text-[11px] font-bold uppercase tracking-wider text-slate-500 select-none whitespace-nowrap">
+            <tr className="border-b border-slate-200 bg-slate-50 text-[11px] font-bold uppercase tracking-wider text-slate-500 select-none whitespace-nowrap dark:border-slate-800 dark:bg-slate-900/80 dark:text-slate-400">
               <th className="py-3.5 pl-5 pr-3 w-[23%] align-middle whitespace-nowrap">
                 <div className="flex items-center gap-1.5 leading-none">
                   <Stethoscope className="h-3.5 w-3.5 text-slate-400 shrink-0" />

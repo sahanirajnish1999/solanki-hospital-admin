@@ -68,23 +68,23 @@ export default function DoctorStatsCards({
             onClick={() => onSelectFilter(c.key)}
             className={`flex items-center justify-between rounded-xl border p-3 sm:p-3.5 text-left transition-all duration-150 cursor-pointer ${
               isActive
-                ? "border-slate-800 bg-slate-50/90 shadow-2xs ring-1 ring-slate-800/10"
-                : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/50"
+                ? "border-slate-800 bg-slate-50/90 shadow-2xs ring-1 ring-slate-800/10 dark:border-slate-700 dark:bg-slate-800/90 dark:ring-slate-700/50"
+                : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/50 dark:border-slate-800 dark:bg-slate-900/40 dark:hover:border-slate-700 dark:hover:bg-slate-800/50"
             }`}
           >
             <div>
               <div className="flex items-center gap-1.5">
                 <span className={`h-1.5 w-1.5 rounded-full ${c.dotColor}`} />
-                <span className="text-[11px] font-medium text-slate-500">
+                <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
                   {c.label}
                 </span>
               </div>
               <div className="mt-1 flex items-baseline gap-2">
-                <span className="text-lg sm:text-xl font-semibold tracking-tight text-slate-900 tabular-nums">
+                <span className="text-lg sm:text-xl font-semibold tracking-tight text-slate-900 dark:text-slate-100 tabular-nums">
                   {c.value}
                 </span>
                 {c.badge && (
-                  <span className="rounded bg-amber-50 border border-amber-200/80 px-1.5 py-0.5 text-[9px] font-medium text-amber-700">
+                  <span className="rounded bg-amber-50 border border-amber-200/80 px-1.5 py-0.5 text-[9px] font-medium text-amber-700 dark:bg-amber-950/40 dark:border-amber-800/50 dark:text-amber-300">
                     {c.badge}
                   </span>
                 )}
@@ -94,8 +94,8 @@ export default function DoctorStatsCards({
             <div
               className={`flex h-7.5 w-7.5 items-center justify-center rounded-lg border transition-colors ${
                 isActive
-                  ? "bg-slate-900 text-white border-slate-900"
-                  : "bg-slate-100/80 text-slate-500 border-slate-200/60"
+                  ? "bg-slate-900 text-white border-slate-900 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-100"
+                  : "bg-slate-100/80 text-slate-500 border-slate-200/60 dark:bg-slate-800/60 dark:text-slate-400 dark:border-slate-700/60"
               }`}
             >
               <Icon className="h-3.5 w-3.5" />
