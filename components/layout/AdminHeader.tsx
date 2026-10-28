@@ -36,6 +36,11 @@ export default function AdminHeader({ activeView }: AdminHeaderProps) {
       subtitle:
         "Patient tokens, scheduled clinical slots, fees, and payment status",
     },
+    blogs: {
+      title: "Medical Blogs & Clinical Insights",
+      subtitle:
+        "Publish patient education, clinical highlights, and orthopedic care updates",
+    },
     admins: {
       title: "Administrators & Access Control",
       subtitle:

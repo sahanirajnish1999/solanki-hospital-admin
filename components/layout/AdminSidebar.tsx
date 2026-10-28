@@ -14,6 +14,7 @@ import {
   CalendarCheck,
   LogOut,
   Hospital,
+  BookOpen,
 } from "lucide-react";
 
 export type AdminView =
@@ -21,6 +22,7 @@ export type AdminView =
   | "specializations"
   | "doctors"
   | "appointments"
+  | "blogs"
   | "admins"
   | "profile";
 
@@ -67,6 +69,11 @@ export default function AdminSidebar({
       id: "appointments" as AdminView,
       label: "Appointments",
       icon: CalendarCheck,
+    },
+    {
+      id: "blogs" as AdminView,
+      label: "Medical Blogs",
+      icon: BookOpen,
     },
     ...(isSuperAdmin
       ? [

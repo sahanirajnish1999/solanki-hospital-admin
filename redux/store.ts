@@ -4,6 +4,7 @@ import { adminApi } from "./api/adminApi";
 import { specializationApi } from "./api/specializationApi";
 import { doctorApi } from "./api/doctorApi";
 import { appointmentApi } from "./api/appointmentApi";
+import { blogApi } from "./api/blogApi";
 import authReducer from "./features/authSlice";
 
 export const makeStore = () => {
@@ -14,6 +15,7 @@ export const makeStore = () => {
       [specializationApi.reducerPath]: specializationApi.reducer,
       [doctorApi.reducerPath]: doctorApi.reducer,
       [appointmentApi.reducerPath]: appointmentApi.reducer,
+      [blogApi.reducerPath]: blogApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({
@@ -22,7 +24,8 @@ export const makeStore = () => {
         adminApi.middleware,
         specializationApi.middleware,
         doctorApi.middleware,
-        appointmentApi.middleware
+        appointmentApi.middleware,
+        blogApi.middleware
       ),
     devTools: process.env.NODE_ENV !== "production",
   });

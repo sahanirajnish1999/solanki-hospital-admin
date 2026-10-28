@@ -5,6 +5,7 @@ import { useGetAllSpecializationsQuery } from "@/redux/api/specializationApi";
 import { useGetDoctorListQuery } from "@/redux/api/doctorApi";
 import { useGetAllAdminsQuery } from "@/redux/api/adminApi";
 import { useGetAppointmentsQuery } from "@/redux/api/appointmentApi";
+import { useGetAllBlogsQuery } from "@/redux/api/blogApi";
 import { useAppSelector } from "@/redux/hooks";
 import { getAdminImageUrl } from "@/redux/utils/imageHelper";
 import type { AdminView } from "../layout/AdminSidebar";
@@ -20,6 +21,7 @@ import {
   Calendar,
   CalendarCheck,
   Clock,
+  BookOpen,
 } from "lucide-react";
 
 interface DashboardOverviewProps {
@@ -49,6 +51,7 @@ export default function DashboardOverview({
   const { data: specData } = useGetAllSpecializationsQuery({ All: true });
   const { data: docData } = useGetDoctorListQuery({ limit: 5 });
   const { data: appointmentData } = useGetAppointmentsQuery({ Limit: 5 });
+  const { data: blogData } = useGetAllBlogsQuery({ Limit: 5 });
   const { data: adminData } = useGetAllAdminsQuery(undefined, {
     skip: !isSuperAdmin,
   });
@@ -60,6 +63,7 @@ export default function DashboardOverview({
     (docData?.Data?.Pagination?.Total || doctors.length);
   const onlineDoctorsCount = doctors.filter((d) => d.IsOnline).length;
   const totalAdmins = adminData?.Pagination?.Total || 1;
+  const totalBlogs = blogData?.Pagination?.Total ?? (blogData?.Data?.length || 0);
 
   const appointments = appointmentData?.Data?.Appointments || [];
   const totalAppointments =
@@ -100,6 +104,14 @@ export default function DashboardOverview({
       target: "doctors" as AdminView,
       actionText: "Check Availability",
       isLive: true,
+    },
+    {
+      title: "Medical Blogs",
+      value: totalBlogs,
+      icon: BookOpen,
+      badge: "Clinical Articles",
+      target: "blogs" as AdminView,
+      actionText: "Manage Blogs",
     },
     {
       title: "Administrators",

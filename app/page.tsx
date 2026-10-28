@@ -7,6 +7,7 @@ import DashboardOverview from "@/components/dashboard/DashboardOverview";
 import SpecializationManager from "@/components/specializations/SpecializationManager";
 import DoctorManager from "@/components/doctors/DoctorManager";
 import AppointmentManager from "@/components/appointments/AppointmentManager";
+import BlogManager from "@/components/blogs/BlogManager";
 import AdminManagementTable from "@/components/superadmin/AdminManagementTable";
 import ProfileCard from "@/components/profile/ProfileCard";
 import AuthForms from "@/components/auth/AuthForms";
@@ -30,6 +31,7 @@ export default function Home() {
           "specializations",
           "doctors",
           "appointments",
+          "blogs",
           "admins",
           "profile",
         ].includes(saved)
@@ -118,6 +120,8 @@ export default function Home() {
               {activeView === "doctors" && <DoctorManager />}
 
               {activeView === "appointments" && <AppointmentManager />}
+
+              {activeView === "blogs" && <BlogManager />}
 
               {activeView === "admins" && isSuperAdmin && (
                 <div className="space-y-4">
