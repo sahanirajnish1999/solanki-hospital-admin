@@ -5,10 +5,12 @@ import Dropdown, { DropdownOption } from "@/components/common/Dropdown";
 import {
   useCreateBlogMutation,
   useUpdateBlogMutation,
+  useGetBlogByIdQuery,
 } from "@/redux/api/blogApi";
 import type { IBlog } from "@/redux/types/blog.types";
 import { getAdminImageUrl } from "@/redux/utils/imageHelper";
 import { getErrorMessage } from "@/redux/utils/errorHelper";
+import { extractHighlights } from "@/redux/utils/blogHelper";
 import categoriesList from "@/data/blogCategories.json";
 import {
   X,
@@ -41,33 +43,63 @@ export default function CreateEditBlogModal({
   onSuccess,
 }: CreateEditBlogModalProps) {
   const isEditing = Boolean(blogToEdit);
+  const blogId = blogToEdit?._id || blogToEdit?.Id;
+
+  // Complete View API: fetch full blog data from GET /v1/api/blog/:id for complete editing (including KeyClinicalHighlights)
+  const { data: fullBlogResponse, isLoading: isLoadingFullBlog } =
+    useGetBlogByIdQuery(blogId || "", {
+      skip: !isEditing || !blogId || !isOpen,
+    });
 
   // Form states initialized directly from blogToEdit (fresh instance per key)
   const [title, setTitle] = useState(blogToEdit?.Title || "");
   const [category, setCategory] = useState(
-    blogToEdit?.Category || categoriesList[0] || "SPORTS INJURY"
+    blogToEdit?.Category || categoriesList[0] || "SPORTS INJURY",
   );
   const [content, setContent] = useState(blogToEdit?.Content || "");
-  const [highlights, setHighlights] = useState<string[]>(
-    Array.isArray(blogToEdit?.KeyClinicalHighlights)
-      ? [...blogToEdit.KeyClinicalHighlights]
-      : []
+  const [highlights, setHighlights] = useState<string[]>(() =>
+    extractHighlights(blogToEdit),
   );
   const [highlightInput, setHighlightInput] = useState("");
   const [consultationNote, setConsultationNote] = useState(
-    blogToEdit?.ConsultationNote || ""
+    blogToEdit?.ConsultationNote || "",
   );
   const [featuredImage, setFeaturedImage] = useState(
-    blogToEdit?.FeaturedImage || ""
+    blogToEdit?.FeaturedImage || "",
   );
   const [imagePreview, setImagePreview] = useState(
-    blogToEdit?.FeaturedImage ? getAdminImageUrl(blogToEdit.FeaturedImage) : ""
+    blogToEdit?.FeaturedImage ? getAdminImageUrl(blogToEdit.FeaturedImage) : "",
   );
   const [isPublished, setIsPublished] = useState(
-    blogToEdit?.IsPublished ?? true
+    blogToEdit?.IsPublished ?? true,
   );
 
   const [formError, setFormError] = useState<string | null>(null);
+
+  // Sync state when full blog data arrives from GET /v1/api/blog/:id
+  useEffect(() => {
+    if (!isEditing || !fullBlogResponse?.Data) return;
+    const fullBlog = fullBlogResponse.Data;
+
+    if (fullBlog.Title) setTitle(fullBlog.Title);
+    if (fullBlog.Category) setCategory(fullBlog.Category);
+    if (fullBlog.Content) setContent(fullBlog.Content);
+    if (fullBlog.ConsultationNote !== undefined) {
+      setConsultationNote(fullBlog.ConsultationNote || "");
+    }
+    if (fullBlog.FeaturedImage) {
+      setFeaturedImage(fullBlog.FeaturedImage);
+      setImagePreview(getAdminImageUrl(fullBlog.FeaturedImage));
+    }
+    if (fullBlog.IsPublished !== undefined) {
+      setIsPublished(Boolean(fullBlog.IsPublished));
+    }
+
+    const fetchedHighlights = extractHighlights(fullBlog);
+    if (fetchedHighlights.length > 0) {
+      setHighlights(fetchedHighlights);
+    }
+  }, [isEditing, fullBlogResponse]);
 
   // RTK Query Mutations
   const [createBlog, { isLoading: isCreating }] = useCreateBlogMutation();
@@ -190,8 +222,8 @@ export default function CreateEditBlogModal({
       setFormError(
         getErrorMessage(
           err,
-          `Failed to ${isEditing ? "update" : "create"} blog article. Please check all fields.`
-        )
+          `Failed to ${isEditing ? "update" : "create"} blog article. Please check all fields.`,
+        ),
       );
     }
   };
@@ -227,7 +259,8 @@ export default function CreateEditBlogModal({
                 </span>
               </div>
               <p className="text-xs text-slate-400 mt-0.5">
-                Publish clinical insights, sports medicine guides, and patient education
+                Publish clinical insights, sports medicine guides, and patient
+                education
               </p>
             </div>
           </div>
@@ -242,7 +275,10 @@ export default function CreateEditBlogModal({
         </div>
 
         {/* Modal Body Form */}
-        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-4">
+        <form
+          onSubmit={handleSubmit}
+          className="flex-1 overflow-y-auto p-6 space-y-4"
+        >
           {/* Error Banner */}
           {formError && (
             <div className="flex items-center gap-2.5 rounded-2xl border border-rose-200 bg-rose-50/80 p-3 text-xs text-rose-800 animate-in fade-in">
@@ -303,7 +339,9 @@ export default function CreateEditBlogModal({
               <label className="flex items-center gap-1.5 text-xs font-semibold text-slate-700 mb-1.5">
                 <ImageIcon className="h-3.5 w-3.5 text-[#008ba3]" />
                 <span>Featured Banner Image</span>
-                <span className="text-[10px] font-normal text-slate-400">(Optional)</span>
+                <span className="text-[10px] font-normal text-slate-400">
+                  (Optional)
+                </span>
               </label>
 
               {imagePreview ? (
@@ -378,7 +416,9 @@ export default function CreateEditBlogModal({
                   <div className="flex items-center gap-1.5">
                     <span
                       className={`h-2 w-2 rounded-full ${
-                        isPublished ? "bg-emerald-500 animate-pulse" : "bg-amber-400"
+                        isPublished
+                          ? "bg-emerald-500 animate-pulse"
+                          : "bg-amber-400"
                       }`}
                     />
                     <span className="text-xs font-bold text-slate-900">
@@ -412,9 +452,16 @@ export default function CreateEditBlogModal({
                 <Sparkles className="h-3.5 w-3.5 text-teal-600" />
                 <span>Key Clinical Highlights</span>
               </label>
-              <span className="text-[10px] font-medium text-slate-400">
-                {highlights.length} added
-              </span>
+              <div className="flex items-center gap-2">
+                {isLoadingFullBlog && (
+                  <span className="text-[10px] text-teal-600 animate-pulse font-medium">
+                    Syncing points...
+                  </span>
+                )}
+                <span className="text-[10px] font-medium text-slate-400">
+                  {highlights.length} added
+                </span>
+              </div>
             </div>
 
             <div className="flex gap-2">
@@ -490,7 +537,9 @@ export default function CreateEditBlogModal({
             <div className="flex items-center gap-1.5 text-xs text-slate-400">
               <Eye className="h-3.5 w-3.5 text-slate-400" />
               <span>
-                {isPublished ? "Will publish live immediately" : "Will save as draft"}
+                {isPublished
+                  ? "Will publish live immediately"
+                  : "Will save as draft"}
               </span>
             </div>
 
@@ -516,7 +565,9 @@ export default function CreateEditBlogModal({
                 ) : (
                   <>
                     <CheckCircle2 className="h-3.5 w-3.5 text-teal-400" />
-                    <span>{isEditing ? "Save Changes" : "Publish Article"}</span>
+                    <span>
+                      {isEditing ? "Save Changes" : "Publish Article"}
+                    </span>
                   </>
                 )}
               </button>
