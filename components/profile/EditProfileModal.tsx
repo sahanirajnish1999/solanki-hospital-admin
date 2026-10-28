@@ -75,52 +75,75 @@ export default function EditProfileModal({
     imageBase64 || (admin.ProfileImage ? getAdminImageUrl(admin.ProfileImage) : "");
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-xs">
-      <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl">
-        <div className="flex items-center justify-between border-b border-slate-100 pb-4">
-          <h3 className="text-lg font-bold text-slate-900">
-            Edit Admin Profile
-          </h3>
+    <div
+      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs transition-opacity duration-200 animate-in fade-in"
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="w-full max-w-md overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl transition-all duration-200 animate-in zoom-in-95"
+      >
+        {/* Accent Bar */}
+        <div className="h-1 w-full bg-[#008ba3]" />
+
+        <div className="flex items-center justify-between border-b border-slate-100 px-5 py-3.5">
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-teal-50 text-[#008ba3] border border-teal-200/60 shadow-2xs">
+              <User className="h-4 w-4" />
+            </div>
+            <div>
+              <h3 className="text-sm font-semibold text-slate-900">
+                Edit Admin Profile
+              </h3>
+              <p className="text-[11px] text-slate-400">
+                Update your administrator identity and contact details
+              </p>
+            </div>
+          </div>
           <button
+            type="button"
             onClick={onClose}
-            className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+            aria-label="Close modal"
+            className="flex h-7 w-7 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 cursor-pointer"
           >
-            <X className="h-5 w-5" />
+            <X className="h-4 w-4" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="mt-4 space-y-4">
+        <form onSubmit={handleSubmit} className="p-5 space-y-3.5">
           {error && (
-            <div className="flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 p-3 text-xs text-red-700">
-              <AlertCircle className="h-4 w-4 shrink-0 text-red-600 mt-0.5" />
+            <div className="flex items-start gap-2 rounded-lg border border-rose-200 bg-rose-50 p-2.5 text-xs text-rose-700">
+              <AlertCircle className="h-4 w-4 shrink-0 text-rose-600 mt-0.5" />
               <span>{error}</span>
             </div>
           )}
 
           {success && (
-            <div className="flex items-start gap-2 rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-xs text-emerald-700">
+            <div className="flex items-start gap-2 rounded-lg border border-emerald-200 bg-emerald-50 p-2.5 text-xs text-emerald-700">
               <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600 mt-0.5" />
               <span>{success}</span>
             </div>
           )}
 
           {/* Avatar Preview & Upload */}
-          <div className="flex items-center gap-4">
-            {currentPreview ? (
-              <img
-                src={currentPreview}
-                alt="Admin Avatar"
-                className="h-16 w-16 rounded-full object-cover ring-2 ring-blue-500/30"
-              />
-            ) : (
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-blue-100 text-blue-700">
-                <User className="h-8 w-8" />
-              </div>
-            )}
+          <div className="flex items-center gap-3.5 rounded-xl border border-slate-100 bg-slate-50/60 p-3">
+            <div className="relative shrink-0">
+              {currentPreview ? (
+                <img
+                  src={currentPreview}
+                  alt="Admin Avatar"
+                  className="h-14 w-14 rounded-xl object-cover ring-1 ring-slate-200 shadow-2xs"
+                />
+              ) : (
+                <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-slate-100 text-slate-700 font-semibold text-lg border border-slate-200 shadow-2xs">
+                  {admin.Name.charAt(0)}
+                </div>
+              )}
+            </div>
 
-            <div>
-              <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-slate-300 bg-slate-50 px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-100">
-                <Upload className="h-3.5 w-3.5" />
+            <div className="min-w-0 flex-1">
+              <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 hover:bg-slate-50 shadow-2xs transition">
+                <Upload className="h-3.5 w-3.5 text-slate-400" />
                 <span>Upload New Avatar</span>
                 <input
                   type="file"
@@ -136,51 +159,58 @@ export default function EditProfileModal({
           </div>
 
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
-              Full Name
+            <label className="block text-[11px] font-medium text-slate-700 mb-1">
+              Full Name <span className="text-rose-500">*</span>
             </label>
             <div className="relative">
-              <User className="absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
+              <User className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
               <input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
-                className="w-full rounded-xl border border-slate-300 bg-slate-50 py-2.5 pl-10 pr-4 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:bg-white"
+                className="w-full rounded-lg border border-slate-200 bg-slate-50/60 py-2 pl-8.5 pr-3 text-xs text-slate-900 outline-none transition focus:border-slate-400 focus:bg-white"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
+            <label className="block text-[11px] font-medium text-slate-700 mb-1">
               Phone Number
             </label>
             <div className="relative">
-              <Phone className="absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
+              <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
               <input
                 type="tel"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="+91 9876543210"
-                className="w-full rounded-xl border border-slate-300 bg-slate-50 py-2.5 pl-10 pr-4 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:bg-white"
+                className="w-full rounded-lg border border-slate-200 bg-slate-50/60 py-2 pl-8.5 pr-3 text-xs text-slate-900 outline-none transition focus:border-slate-400 focus:bg-white"
               />
             </div>
           </div>
 
-          <div className="mt-6 flex justify-end gap-3 pt-2">
+          <div className="mt-5 flex justify-end gap-2 pt-3 border-t border-slate-100">
             <button
               type="button"
               onClick={onClose}
-              className="rounded-xl border border-slate-200 px-4 py-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-100"
+              className="rounded-lg border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-medium text-slate-700 shadow-2xs transition hover:bg-slate-50 cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isLoading}
-              className="rounded-xl bg-blue-600 px-5 py-2.5 text-xs font-semibold text-white shadow-md shadow-blue-500/20 transition hover:bg-blue-700 disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-slate-900 px-3.5 py-1.5 text-xs font-medium text-white shadow-2xs transition hover:bg-slate-800 disabled:opacity-50 cursor-pointer"
             >
-              {isLoading ? "Saving Changes..." : "Save Changes"}
+              {isLoading ? (
+                <>
+                  <div className="h-3 w-3 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                  <span>Saving...</span>
+                </>
+              ) : (
+                <span>Save Changes</span>
+              )}
             </button>
           </div>
         </form>

@@ -1,5 +1,4 @@
-export const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:4200";
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 /**
  * Returns full URL for an admin profile image or placeholder
@@ -10,7 +9,11 @@ export function getAdminImageUrl(path?: string | null): string {
   }
 
   // If already full URL (http, https, data:image)
-  if (path.startsWith("http://") || path.startsWith("https://") || path.startsWith("data:")) {
+  if (
+    path.startsWith("http://") ||
+    path.startsWith("https://") ||
+    path.startsWith("data:")
+  ) {
     return path;
   }
 

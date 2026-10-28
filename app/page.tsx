@@ -95,7 +95,7 @@ export default function Home() {
         </div>
       ) : (
         /* Authenticated Full Enterprise Admin Panel */
-        <div className="flex min-h-screen bg-slate-50">
+        <div className="flex h-screen overflow-hidden bg-slate-50">
           {/* Left Sidebar */}
           <AdminSidebar
             activeView={activeView}
@@ -103,7 +103,7 @@ export default function Home() {
           />
 
           {/* Main Content Area */}
-          <div className="flex-1 flex flex-col min-w-0">
+          <div className="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto">
             {/* Top Header */}
             <AdminHeader activeView={activeView} />
 
@@ -126,14 +126,19 @@ export default function Home() {
               )}
 
               {activeView === "profile" && (
-                <div className="space-y-6 max-w-4xl mx-auto">
-                  <div>
-                    <h2 className="text-xl font-bold text-slate-900">
-                      My Profile &amp; Account Security
-                    </h2>
-                    <p className="text-xs text-slate-500">
-                      View and manage your administrator contact information and password
-                    </p>
+                <div className="space-y-4 max-w-4xl mx-auto">
+                  <div className="flex items-center gap-2.5">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-900 text-teal-400 shadow-2xs">
+                      <ShieldCheck className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <h2 className="text-base font-semibold text-slate-900 tracking-tight">
+                        My Profile &amp; Account Security
+                      </h2>
+                      <p className="text-xs text-slate-400">
+                        View and manage your administrator contact information and password
+                      </p>
+                    </div>
                   </div>
                   <ProfileCard />
                 </div>

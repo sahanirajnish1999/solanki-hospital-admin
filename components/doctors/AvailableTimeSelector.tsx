@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useMemo } from "react";
-import { Clock } from "lucide-react";
+import { Clock, X } from "lucide-react";
 import Dropdown, { DropdownOption } from "@/components/common/Dropdown";
 
 export interface AvailableTimeSelectorProps {
@@ -179,8 +179,18 @@ export default function AvailableTimeSelector({
           onChange={(e) => onChange(e.target.value)}
           placeholder="e.g. 9:00 AM - 4:00 PM"
           required={required}
-          className="w-full rounded-xl border border-slate-200 bg-slate-50/70 py-2.5 pl-10 pr-3.5 text-xs text-slate-900 placeholder:text-slate-400 outline-none transition-all duration-150 focus:border-[#008ba3] focus:bg-white focus:ring-3 focus:ring-[#008ba3]/10"
+          className="w-full rounded-xl border border-slate-200 bg-slate-50/70 py-2.5 pl-10 pr-8 text-xs text-slate-900 placeholder:text-slate-400 outline-none transition-all duration-150 focus:border-[#008ba3] focus:bg-white focus:ring-3 focus:ring-[#008ba3]/10"
         />
+        {value && (
+          <button
+            type="button"
+            onClick={() => onChange("")}
+            title="Clear"
+            className="absolute right-2.5 flex h-4 w-4 items-center justify-center rounded-full text-slate-400 hover:bg-slate-200 hover:text-slate-600 cursor-pointer"
+          >
+            <X className="h-3 w-3" />
+          </button>
+        )}
       </div>
 
       {helperText && (

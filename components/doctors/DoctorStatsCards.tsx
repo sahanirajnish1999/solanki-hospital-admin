@@ -23,106 +23,86 @@ export default function DoctorStatsCards({
   activeFilter,
   onSelectFilter,
 }: DoctorStatsCardsProps) {
+  const cards = [
+    {
+      key: "all" as const,
+      label: "Total Doctors",
+      value: summary.Total,
+      icon: Stethoscope,
+      dotColor: "bg-slate-400",
+    },
+    {
+      key: "pending" as const,
+      label: "Pending Review",
+      value: summary.Pending,
+      icon: AlertCircle,
+      dotColor: "bg-amber-500",
+      badge: summary.Pending > 0 ? "Action needed" : null,
+    },
+    {
+      key: "approved" as const,
+      label: "Approved Doctors",
+      value: summary.Approved,
+      icon: CheckCircle2,
+      dotColor: "bg-emerald-500",
+    },
+    {
+      key: "rejected" as const,
+      label: "Rejected Applications",
+      value: summary.Rejected,
+      icon: XCircle,
+      dotColor: "bg-slate-400",
+    },
+  ];
+
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
-      {/* 1. Total Doctors */}
-      <button
-        type="button"
-        onClick={() => onSelectFilter("all")}
-        className={`flex items-center justify-between rounded-2xl border p-4 text-left transition-all ${
-          activeFilter === "all"
-            ? "border-blue-500 bg-blue-50/40 shadow-xs ring-1 ring-blue-500"
-            : "border-slate-200 bg-white hover:border-slate-300"
-        }`}
-      >
-        <div>
-          <span className="text-xs font-semibold text-slate-500">
-            Total Doctors
-          </span>
-          <div className="mt-1 text-2xl font-extrabold text-slate-900">
-            {summary.Total}
-          </div>
-        </div>
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
-          <Stethoscope className="h-5 w-5" />
-        </div>
-      </button>
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      {cards.map((c) => {
+        const Icon = c.icon;
+        const isActive = activeFilter === c.key;
 
-      {/* 2. Pending Verification */}
-      <button
-        type="button"
-        onClick={() => onSelectFilter("pending")}
-        className={`flex items-center justify-between rounded-2xl border p-4 text-left transition-all ${
-          activeFilter === "pending"
-            ? "border-amber-500 bg-amber-50/40 shadow-xs ring-1 ring-amber-500"
-            : "border-slate-200 bg-white hover:border-slate-300"
-        }`}
-      >
-        <div>
-          <span className="text-xs font-semibold text-slate-500">
-            Pending Review
-          </span>
-          <div className="mt-1 flex items-center gap-2">
-            <span className="text-2xl font-extrabold text-slate-900">
-              {summary.Pending}
-            </span>
-            {summary.Pending > 0 && (
-              <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-700 animate-pulse">
-                Action needed
-              </span>
-            )}
-          </div>
-        </div>
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 text-amber-600">
-          <AlertCircle className="h-5 w-5" />
-        </div>
-      </button>
+        return (
+          <button
+            key={c.key}
+            type="button"
+            onClick={() => onSelectFilter(c.key)}
+            className={`flex items-center justify-between rounded-xl border p-3 sm:p-3.5 text-left transition-all duration-150 cursor-pointer ${
+              isActive
+                ? "border-slate-800 bg-slate-50/90 shadow-2xs ring-1 ring-slate-800/10"
+                : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/50"
+            }`}
+          >
+            <div>
+              <div className="flex items-center gap-1.5">
+                <span className={`h-1.5 w-1.5 rounded-full ${c.dotColor}`} />
+                <span className="text-[11px] font-medium text-slate-500">
+                  {c.label}
+                </span>
+              </div>
+              <div className="mt-1 flex items-baseline gap-2">
+                <span className="text-lg sm:text-xl font-semibold tracking-tight text-slate-900 tabular-nums">
+                  {c.value}
+                </span>
+                {c.badge && (
+                  <span className="rounded bg-amber-50 border border-amber-200/80 px-1.5 py-0.5 text-[9px] font-medium text-amber-700">
+                    {c.badge}
+                  </span>
+                )}
+              </div>
+            </div>
 
-      {/* 3. Approved Doctors */}
-      <button
-        type="button"
-        onClick={() => onSelectFilter("approved")}
-        className={`flex items-center justify-between rounded-2xl border p-4 text-left transition-all ${
-          activeFilter === "approved"
-            ? "border-emerald-500 bg-emerald-50/40 shadow-xs ring-1 ring-emerald-500"
-            : "border-slate-200 bg-white hover:border-slate-300"
-        }`}
-      >
-        <div>
-          <span className="text-xs font-semibold text-slate-500">
-            Approved Doctors
-          </span>
-          <div className="mt-1 text-2xl font-extrabold text-slate-900">
-            {summary.Approved}
-          </div>
-        </div>
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
-          <CheckCircle2 className="h-5 w-5" />
-        </div>
-      </button>
-
-      {/* 4. Rejected Requests */}
-      <button
-        type="button"
-        onClick={() => onSelectFilter("rejected")}
-        className={`flex items-center justify-between rounded-2xl border p-4 text-left transition-all ${
-          activeFilter === "rejected"
-            ? "border-rose-500 bg-rose-50/40 shadow-xs ring-1 ring-rose-500"
-            : "border-slate-200 bg-white hover:border-slate-300"
-        }`}
-      >
-        <div>
-          <span className="text-xs font-semibold text-slate-500">
-            Rejected Applications
-          </span>
-          <div className="mt-1 text-2xl font-extrabold text-slate-900">
-            {summary.Rejected}
-          </div>
-        </div>
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-50 text-rose-600">
-          <XCircle className="h-5 w-5" />
-        </div>
-      </button>
+            <div
+              className={`flex h-7.5 w-7.5 items-center justify-center rounded-lg border transition-colors ${
+                isActive
+                  ? "bg-slate-900 text-white border-slate-900"
+                  : "bg-slate-100/80 text-slate-500 border-slate-200/60"
+              }`}
+            >
+              <Icon className="h-3.5 w-3.5" />
+            </div>
+          </button>
+        );
+      })}
     </div>
   );
 }

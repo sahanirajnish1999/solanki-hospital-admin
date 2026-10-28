@@ -23,6 +23,7 @@ import {
   Table as TableIcon,
   ChevronLeft,
   ChevronRight,
+  X,
 } from "lucide-react";
 
 import DoctorStatsCards from "./DoctorStatsCards";
@@ -161,16 +162,16 @@ export default function DoctorManager() {
   return (
     <div className="space-y-6">
       {/* Top Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-3.5 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-100 text-blue-700">
-            <Stethoscope className="h-5 w-5" />
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-900 text-teal-400 shadow-2xs">
+            <Stethoscope className="h-4.5 w-4.5" />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-slate-900">
+            <h2 className="text-base font-semibold text-slate-900 tracking-tight">
               Doctor Administration
             </h2>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-slate-400">
               Staff registration, profile verification, and clinical schedule management
             </p>
           </div>
@@ -178,40 +179,40 @@ export default function DoctorManager() {
 
         <div className="flex items-center gap-2">
           {/* View mode toggle */}
-          <div className="flex items-center rounded-xl border border-slate-200 bg-white p-1">
+          <div className="flex items-center rounded-lg border border-slate-200 bg-slate-100/80 p-0.5">
             <button
               onClick={() => setViewMode("table")}
-              className={`rounded-lg p-1.5 transition ${
+              className={`rounded-md p-1.5 transition cursor-pointer ${
                 viewMode === "table"
-                  ? "bg-slate-100 text-blue-600"
-                  : "text-slate-400 hover:text-slate-600"
+                  ? "bg-white text-slate-900 shadow-2xs"
+                  : "text-slate-400 hover:text-slate-700"
               }`}
               title="Table view"
             >
-              <TableIcon className="h-4 w-4" />
+              <TableIcon className="h-3.5 w-3.5" />
             </button>
             <button
               onClick={() => setViewMode("cards")}
-              className={`rounded-lg p-1.5 transition ${
+              className={`rounded-md p-1.5 transition cursor-pointer ${
                 viewMode === "cards"
-                  ? "bg-slate-100 text-blue-600"
-                  : "text-slate-400 hover:text-slate-600"
+                  ? "bg-white text-slate-900 shadow-2xs"
+                  : "text-slate-400 hover:text-slate-700"
               }`}
               title="Cards view"
             >
-              <LayoutGrid className="h-4 w-4" />
+              <LayoutGrid className="h-3.5 w-3.5" />
             </button>
           </div>
 
           <button
             onClick={() => refetch()}
             disabled={isFetching}
-            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-xs transition hover:bg-slate-50 active:scale-95 disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 shadow-2xs transition hover:bg-slate-50 cursor-pointer disabled:opacity-50"
             title="Refresh doctor list"
           >
             <RotateCw
-              className={`h-3.5 w-3.5 ${
-                isFetching ? "animate-spin text-blue-600" : ""
+              className={`h-3 w-3 ${
+                isFetching ? "animate-spin text-slate-900" : "text-slate-400"
               }`}
             />
             <span className="hidden sm:inline">Refresh</span>
@@ -219,9 +220,9 @@ export default function DoctorManager() {
 
           <button
             onClick={() => setIsCreateModalOpen(true)}
-            className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600 px-4 py-2 text-xs font-bold text-white shadow-sm transition hover:bg-blue-700 active:scale-95"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-medium text-white shadow-2xs transition hover:bg-slate-800 cursor-pointer"
           >
-            <Plus className="h-4 w-4" />
+            <Plus className="h-3.5 w-3.5" />
             <span>Register Doctor</span>
           </button>
         </div>
@@ -240,7 +241,7 @@ export default function DoctorManager() {
       {/* Feedback Banner */}
       {feedback && (
         <div
-          className={`flex items-center justify-between rounded-xl p-3.5 text-xs ${
+          className={`flex items-center justify-between rounded-lg p-3 text-xs ${
             feedback.type === "success"
               ? "border border-emerald-200 bg-emerald-50 text-emerald-800"
               : "border border-red-200 bg-red-50 text-red-800"
@@ -256,7 +257,7 @@ export default function DoctorManager() {
           </div>
           <button
             onClick={() => setFeedback(null)}
-            className="text-[11px] font-semibold underline"
+            className="text-[11px] font-semibold underline cursor-pointer"
           >
             Dismiss
           </button>
@@ -264,44 +265,73 @@ export default function DoctorManager() {
       )}
 
       {/* Filter / Search Bar */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-xs">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 rounded-xl border border-slate-200 bg-white p-2.5 shadow-2xs">
         {/* Search */}
-        <div className="relative">
-          <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search by name, email, or phone..."
-            className="w-full rounded-xl border border-slate-200 bg-slate-50/70 py-2 pl-9 pr-3 text-xs text-slate-900 outline-none transition focus:border-blue-600 focus:bg-white"
+            placeholder="Search by doctor name, email, or phone..."
+            className="w-full rounded-lg border border-slate-200 bg-slate-50/60 py-1.5 pl-8.5 pr-8 text-xs text-slate-900 placeholder:text-slate-400 outline-none transition focus:border-slate-400 focus:bg-white"
           />
+          {searchTerm && (
+            <button
+              onClick={() => setSearchTerm("")}
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
+              title="Clear search"
+            >
+              <X className="h-3 w-3" />
+            </button>
+          )}
         </div>
 
         {/* Specialization Filter */}
-        <div>
+        <div className="w-full sm:w-60">
           <Dropdown
             options={specializationOptions}
             value={selectedSpecialization}
             onChange={(val) => setSelectedSpecialization(val)}
-            placeholder="All Specializations"
+            triggerClassName="!py-1.5 !rounded-lg text-xs border-slate-200 bg-slate-50/60"
+            dropdownClassName="w-72 text-xs border-slate-200"
             searchable
             clearable
+            placeholder="All Specializations"
           />
         </div>
 
-        {/* Status Filter Dropdown */}
-        <div>
+        {/* Verification Status Filter */}
+        <div className="w-full sm:w-52">
           <Dropdown
             options={statusOptions}
             value={statusFilter}
             onChange={(val) => {
-              setStatusFilter((val || "all") as DoctorVerificationStatus | "all");
+              setStatusFilter(val as DoctorVerificationStatus | "all");
               setPage(1);
             }}
+            triggerClassName="!py-1.5 !rounded-lg text-xs border-slate-200 bg-slate-50/60"
+            dropdownClassName="w-64 text-xs border-slate-200"
             placeholder="All Verification Statuses"
-            showBadgeInTrigger
           />
         </div>
+
+        {/* Reset Filter Button */}
+        {(searchTerm || selectedSpecialization || statusFilter !== "all") && (
+          <button
+            onClick={() => {
+              setSearchTerm("");
+              setSelectedSpecialization("");
+              setStatusFilter("all");
+              setPage(1);
+            }}
+            className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition cursor-pointer shrink-0"
+            title="Reset filters"
+          >
+            <RotateCw className="h-3 w-3 text-slate-400" />
+            <span>Reset</span>
+          </button>
+        )}
       </div>
 
       {/* View Component: Table or Cards */}
@@ -327,7 +357,7 @@ export default function DoctorManager() {
 
       {/* Pagination Footer */}
       {pagination && pagination.TotalPages > 1 && (
-        <div className="flex items-center justify-between border border-slate-200 bg-white px-4 py-3 rounded-2xl shadow-xs">
+        <div className="flex items-center justify-between border border-slate-200 bg-white px-4 py-2.5 rounded-xl shadow-2xs">
           <span className="text-xs text-slate-500">
             Page {pagination.Page} of {pagination.TotalPages} ({pagination.Total} total doctors)
           </span>
@@ -336,7 +366,7 @@ export default function DoctorManager() {
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page <= 1 || isFetching}
-              className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-40"
+              className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-40 cursor-pointer"
             >
               <ChevronLeft className="h-3.5 w-3.5" />
               <span>Previous</span>
@@ -344,7 +374,7 @@ export default function DoctorManager() {
             <button
               onClick={() => setPage((p) => Math.min(pagination.TotalPages, p + 1))}
               disabled={page >= pagination.TotalPages || isFetching}
-              className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-40"
+              className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-40 cursor-pointer"
             >
               <span>Next</span>
               <ChevronRight className="h-3.5 w-3.5" />

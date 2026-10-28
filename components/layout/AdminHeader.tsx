@@ -4,8 +4,6 @@ import React from "react";
 import { useAppSelector } from "@/redux/hooks";
 import { getAdminImageUrl } from "@/redux/utils/imageHelper";
 import {
-  ShieldCheck,
-  Sparkles,
   Server,
   User,
 } from "lucide-react";
@@ -52,58 +50,54 @@ export default function AdminHeader({ activeView }: AdminHeaderProps) {
   const current = viewTitles[activeView] || viewTitles.dashboard;
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-slate-200 bg-white/95 px-6 backdrop-blur-md">
+    <header className="sticky top-0 z-30 flex h-14 w-full shrink-0 items-center justify-between border-b border-slate-200/80 bg-white/95 px-6 backdrop-blur-md select-none">
+      {/* Left: Refined Breadcrumbs */}
       <div>
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-semibold text-blue-600">Admin</span>
-          <span className="text-xs text-slate-300">/</span>
-          <h1 className="text-sm font-bold text-slate-900 capitalize">
+        <div className="flex items-center gap-1.5">
+          <span className="text-[11px] font-medium text-slate-400">Admin</span>
+          <span className="text-[11px] text-slate-300">/</span>
+          <h1 className="text-xs font-semibold text-slate-900 tracking-tight">
             {current.title}
           </h1>
         </div>
-        <p className="text-[11px] text-slate-500 hidden sm:block">
+        <p className="text-[10px] text-slate-400 hidden sm:block">
           {current.subtitle}
         </p>
       </div>
 
-      <div className="flex items-center gap-3">
-        {/* White / Black Theme Toggle Icon */}
-        <ThemeToggle showLabel={false} />
-
+      {/* Right Controls */}
+      <div className="flex items-center gap-2.5">
         {/* Backend Gateway indicator */}
-        <div className="hidden sm:flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs text-slate-600">
-          <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+        <div className="hidden sm:flex items-center gap-1.5 rounded-full border border-slate-200/80 bg-slate-50/80 px-2.5 py-1 text-[11px] text-slate-600">
+          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
           <Server className="h-3 w-3 text-slate-400" />
-          <span className="font-medium text-slate-700">API Port 4200</span>
+          <span className="font-medium text-slate-700">Port 4200</span>
         </div>
+
+        {/* Theme Toggle Icon Button */}
+        <ThemeToggle showLabel={false} />
 
         {/* Admin profile pill */}
         {admin && (
-          <div className="flex items-center gap-2.5 rounded-full border border-slate-200 bg-slate-50/80 py-1 pl-1.5 pr-3">
+          <div className="flex items-center gap-2 rounded-full border border-slate-200/80 bg-slate-50/70 py-1 pl-1.5 pr-2.5">
             {admin.ProfileImage ? (
               <img
                 src={getAdminImageUrl(admin.ProfileImage)}
                 alt={admin.Name}
-                className="h-7 w-7 rounded-full object-cover ring-1 ring-blue-500"
+                className="h-6 w-6 rounded-full object-cover border border-slate-200"
               />
             ) : (
-              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-100 text-blue-700">
-                <User className="h-3.5 w-3.5" />
+              <div className="flex h-6 w-6 items-center justify-center rounded-full bg-slate-200 text-slate-700 text-[10px] font-medium">
+                <User className="h-3 w-3" />
               </div>
             )}
             <div className="flex items-center gap-1.5">
-              <span className="text-xs font-bold text-slate-900">
+              <span className="text-xs font-medium text-slate-800">
                 {admin.Name}
               </span>
-              {isSuperAdmin ? (
-                <span className="inline-flex items-center gap-0.5 rounded-full bg-purple-100 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-purple-700">
-                  <Sparkles className="h-2.5 w-2.5" />
+              {isSuperAdmin && (
+                <span className="rounded bg-slate-200/80 px-1.5 py-0.2 text-[9px] font-semibold uppercase tracking-wider text-slate-600">
                   Superadmin
-                </span>
-              ) : (
-                <span className="inline-flex items-center gap-0.5 rounded-full bg-slate-200 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-slate-700">
-                  <ShieldCheck className="h-2.5 w-2.5" />
-                  Admin
                 </span>
               )}
             </div>

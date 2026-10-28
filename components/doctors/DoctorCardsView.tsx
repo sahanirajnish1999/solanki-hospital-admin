@@ -16,6 +16,8 @@ import {
   SlidersHorizontal,
 } from "lucide-react";
 
+import SpecializationIconBadge from "../specializations/SpecializationIconBadge";
+
 interface DoctorCardsViewProps {
   doctors: IDoctor[];
   isVerifying: boolean;
@@ -33,15 +35,15 @@ export default function DoctorCardsView({
 }: DoctorCardsViewProps) {
   if (doctors.length === 0) {
     return (
-      <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-12 text-center text-xs text-slate-500">
-        <Stethoscope className="mx-auto mb-2 h-8 w-8 text-slate-300" />
+      <div className="rounded-xl border border-dashed border-slate-300 bg-white p-12 text-center text-xs text-slate-500">
+        <Stethoscope className="mx-auto mb-2 h-7 w-7 text-slate-300" />
         No doctors found matching the active filters.
       </div>
     );
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
       {doctors.map((doc) => {
         const docId = doc._id || doc.Id || "";
         const vStatus =
@@ -52,25 +54,25 @@ export default function DoctorCardsView({
         return (
           <div
             key={docId}
-            className="group relative flex flex-col justify-between rounded-2xl border border-slate-200 bg-white p-5 shadow-xs transition hover:border-blue-400 hover:shadow-md"
+            className="group relative flex flex-col justify-between rounded-xl border border-slate-200 bg-white p-4 shadow-2xs transition hover:border-slate-300 hover:bg-slate-50/20"
           >
             <div>
               {/* Doctor Head */}
-              <div className="flex items-start gap-3.5 mb-3.5">
+              <div className="flex items-start gap-3 mb-3">
                 <div className="relative shrink-0">
                   {doc.ProfileImage ? (
                     <img
                       src={getAdminImageUrl(doc.ProfileImage)}
                       alt={doc.Name}
-                      className="h-12 w-12 rounded-2xl object-cover ring-1 ring-slate-200 shadow-2xs"
+                      className="h-10 w-10 rounded-lg object-cover ring-1 ring-slate-200 shadow-2xs"
                     />
                   ) : (
-                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white font-bold text-base shadow-xs shadow-blue-500/20">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-100 text-slate-700 font-semibold text-xs border border-slate-200/80">
                       {doc.Name.replace(/^Dr\.\s*/i, "").charAt(0) || "D"}
                     </div>
                   )}
                   <span
-                    className={`absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full border-2 border-white ${
+                    className={`absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-white ${
                       doc.IsOnline ? "bg-emerald-500" : "bg-slate-300"
                     }`}
                     title={doc.IsOnline ? "Online Now" : "Offline"}
@@ -81,24 +83,24 @@ export default function DoctorCardsView({
                   <div className="flex items-center justify-between gap-1">
                     <h4
                       onClick={() => onViewProfile(doc)}
-                      className="truncate text-sm font-bold text-slate-900 group-hover:text-blue-600 transition cursor-pointer"
+                      className="truncate text-xs font-semibold text-slate-900 group-hover:text-teal-700 transition cursor-pointer"
                     >
                       {doc.Name}
                     </h4>
                     {isApproved && (
-                      <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[9px] font-bold text-emerald-700 shrink-0">
+                      <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200/80 bg-emerald-50/80 px-2 py-0.5 text-[10px] font-medium text-emerald-700 shrink-0">
                         <CheckCircle2 className="h-3 w-3" />
                         Approved
                       </span>
                     )}
                     {isPending && (
-                      <span className="inline-flex items-center gap-1 rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-[9px] font-bold text-amber-700 shrink-0">
-                        <AlertCircle className="h-3 w-3" />
+                      <span className="inline-flex items-center gap-1 rounded-full border border-amber-200/80 bg-amber-50/80 px-2 py-0.5 text-[10px] font-medium text-amber-700 shrink-0">
+                        <AlertCircle className="h-3 w-3 animate-pulse" />
                         Pending
                       </span>
                     )}
                     {!isApproved && !isPending && (
-                      <span className="inline-flex items-center gap-1 rounded-full border border-rose-200 bg-rose-50 px-2 py-0.5 text-[9px] font-bold text-rose-700 shrink-0">
+                      <span className="inline-flex items-center gap-1 rounded-full border border-rose-200/80 bg-rose-50/80 px-2 py-0.5 text-[10px] font-medium text-rose-700 shrink-0">
                         <XCircle className="h-3 w-3" />
                         Rejected
                       </span>
@@ -106,15 +108,18 @@ export default function DoctorCardsView({
                   </div>
 
                   <div className="mt-1 flex items-center gap-1.5 flex-wrap">
-                    <span className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-slate-50 px-2 py-0.5 text-[11px] font-semibold text-slate-800">
-                      <Stethoscope className="h-3 w-3 text-blue-600 shrink-0" />
-                      <span className="truncate max-w-[150px]">
+                    <div className="flex items-center gap-1 text-[11px] text-slate-600">
+                      <SpecializationIconBadge
+                        name={doc.Specialization || "General Medicine"}
+                        size="sm"
+                      />
+                      <span className="truncate max-w-[150px] font-medium text-slate-800">
                         {doc.Specialization || "General Medicine"}
                       </span>
-                    </span>
+                    </div>
                   </div>
 
-                  <div className="mt-1.5 flex items-center gap-1 text-[11px] text-slate-500 truncate">
+                  <div className="mt-1 flex items-center gap-1 text-[11px] text-slate-400 truncate">
                     <Mail className="h-3 w-3 text-slate-400 shrink-0" />
                     <span className="truncate">{doc.Email}</span>
                   </div>
@@ -122,7 +127,7 @@ export default function DoctorCardsView({
               </div>
 
               {/* Schedule Info */}
-              <div className="grid grid-cols-2 gap-2 rounded-xl border border-slate-100 bg-slate-50/70 p-2.5 text-[11px] text-slate-600">
+              <div className="grid grid-cols-2 gap-2 rounded-lg border border-slate-100 bg-slate-50/60 p-2 text-[11px] text-slate-500">
                 <div className="flex items-center gap-1.5">
                   <Calendar className="h-3 w-3 text-slate-400 shrink-0" />
                   <span className="truncate">{doc.AvailableDays || "Mon - Fri"}</span>
@@ -135,11 +140,10 @@ export default function DoctorCardsView({
             </div>
 
             {/* Bottom Actions */}
-            <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
-              <div className="flex items-baseline gap-0.5 font-bold text-slate-900 text-xs">
-                <span className="text-[10px] text-slate-400">₹</span>
-                <span className="text-sm font-extrabold">{doc.ConsultationFee || 500}</span>
-                <span className="text-[10px] text-slate-400 font-normal ml-0.5">/visit</span>
+            <div className="mt-3.5 pt-2.5 border-t border-slate-100 flex items-center justify-between">
+              <div className="flex items-baseline gap-0.5 font-semibold text-slate-900 text-xs">
+                <span>₹{doc.ConsultationFee || 500}</span>
+                <span className="text-[10px] text-slate-400 font-normal ml-0.5">/ visit</span>
               </div>
 
               <div className="flex items-center gap-1.5">
@@ -148,7 +152,7 @@ export default function DoctorCardsView({
                     type="button"
                     onClick={() => onApprove(docId)}
                     disabled={isVerifying}
-                    className="inline-flex items-center gap-1 rounded-lg bg-emerald-600 px-2.5 py-1 text-xs font-bold text-white hover:bg-emerald-700 active:scale-95 transition disabled:opacity-50 shadow-2xs"
+                    className="inline-flex items-center gap-1 rounded-lg bg-emerald-600 px-2 py-1 text-[11px] font-medium text-white hover:bg-emerald-700 active:scale-95 transition disabled:opacity-50 shadow-2xs cursor-pointer"
                   >
                     <Check className="h-3 w-3" />
                     <span>Approve</span>
@@ -157,16 +161,16 @@ export default function DoctorCardsView({
                 <button
                   type="button"
                   onClick={() => onManage(doc)}
-                  className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition shadow-2xs"
+                  className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2 py-1 text-[11px] font-medium text-slate-700 hover:bg-slate-50 transition shadow-2xs cursor-pointer"
                   title="Manage schedule & fee"
                 >
-                  <SlidersHorizontal className="h-3 w-3 text-slate-500" />
-                  <span>Manage</span>
+                  <SlidersHorizontal className="h-3 w-3 text-slate-400" />
+                  <span>Schedule</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => onViewProfile(doc)}
-                  className="inline-flex items-center justify-center h-8 w-8 rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-blue-600 transition shadow-2xs"
+                  className="inline-flex items-center justify-center h-6.5 w-6.5 rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition shadow-2xs cursor-pointer"
                   title="View full doctor profile"
                 >
                   <Eye className="h-3.5 w-3.5" />

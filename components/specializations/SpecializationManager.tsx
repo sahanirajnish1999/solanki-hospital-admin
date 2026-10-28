@@ -23,11 +23,15 @@ import {
   X,
   Upload,
   Layers,
+  Table as TableIcon,
+  LayoutGrid,
 } from "lucide-react";
+import SpecializationIconBadge from "./SpecializationIconBadge";
 
 export default function SpecializationManager() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [viewMode, setViewMode] = useState<"cards" | "table">("table");
 
   const statusOptions: DropdownOption[] = useMemo(
     () => [
@@ -47,22 +51,25 @@ export default function SpecializationManager() {
     ],
     []
   );
+
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [editingSpec, setEditingSpec] = useState<ISpecialization | null>(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
   // Close modal on Escape
   useEffect(() => {
-    if (!isAddModalOpen && !editingSpec) return;
+    if (!isAddModalOpen && !editingSpec && !deleteConfirmId) return;
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         setIsAddModalOpen(false);
         setEditingSpec(null);
+        setDeleteConfirmId(null);
       }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isAddModalOpen, editingSpec]);
+  }, [isAddModalOpen, editingSpec, deleteConfirmId]);
+
   const [feedback, setFeedback] = useState<{
     type: "success" | "error";
     text: string;
@@ -93,7 +100,47 @@ export default function SpecializationManager() {
   const [toggleStatus, { isLoading: isToggling }] =
     useToggleSpecializationStatusMutation();
 
-  const specializations = specializationsResponse?.Data || [];
+  const specializations = useMemo(
+    () => specializationsResponse?.Data || [],
+    [specializationsResponse?.Data]
+  );
+
+  // Summary stats
+  const stats = useMemo(() => {
+    const total = specializations.length;
+    const active = specializations.filter((s) => s.IsActive).length;
+    const inactive = total - active;
+    return { total, active, inactive };
+  }, [specializations]);
+
+  const deletingSpec = useMemo(
+    () => specializations.find((s) => (s._id || s.Id) === deleteConfirmId),
+    [specializations, deleteConfirmId]
+  );
+
+  const kpiCards = [
+    {
+      key: "all",
+      label: "Total Specializations",
+      value: stats.total,
+      icon: Layers,
+      dotColor: "bg-slate-400",
+    },
+    {
+      key: "active",
+      label: "Active Departments",
+      value: stats.active,
+      icon: CheckCircle2,
+      dotColor: "bg-emerald-500",
+    },
+    {
+      key: "inactive",
+      label: "Inactive / Paused",
+      value: stats.inactive,
+      icon: AlertCircle,
+      dotColor: "bg-slate-400",
+    },
+  ];
 
   // Filter list
   const filtered = specializations.filter((spec) => {
@@ -229,47 +276,121 @@ export default function SpecializationManager() {
 
   return (
     <div className="space-y-6">
-      {/* Top Action Bar */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-100 text-blue-700">
-              <Activity className="h-5 w-5" />
-            </div>
-            <h2 className="text-xl font-bold text-slate-900">
-              Clinical Specializations
-            </h2>
-            <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-bold text-slate-600">
-              {specializations.length} Total
-            </span>
+      {/* Top Header */}
+      <div className="flex flex-col gap-3.5 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-2.5">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-900 text-teal-400 shadow-2xs">
+            <Activity className="h-4 w-4" />
           </div>
-          <p className="mt-0.5 text-xs text-slate-500">
-            Define medical specialties assigned to doctors across Solanki
-            Hospital
-          </p>
+          <div>
+            <div className="flex items-center gap-2">
+              <h2 className="text-base font-semibold text-slate-900 tracking-tight">
+                Clinical Specializations
+              </h2>
+              <span className="rounded-md bg-slate-100 px-1.5 py-0.5 text-[10px] font-medium text-slate-600 border border-slate-200/60">
+                {specializations.length} Total
+              </span>
+            </div>
+            <p className="text-xs text-slate-400">
+              Define medical specialties assigned to doctors across Solanki Hospital
+            </p>
+          </div>
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2">
+          {/* View mode toggle */}
+          <div className="flex items-center rounded-lg border border-slate-200 bg-slate-100/80 p-0.5">
+            <button
+              onClick={() => setViewMode("table")}
+              className={`rounded-md p-1.5 transition cursor-pointer ${
+                viewMode === "table"
+                  ? "bg-white text-slate-900 shadow-2xs"
+                  : "text-slate-400 hover:text-slate-700"
+              }`}
+              title="Table view"
+            >
+              <TableIcon className="h-3.5 w-3.5" />
+            </button>
+            <button
+              onClick={() => setViewMode("cards")}
+              className={`rounded-md p-1.5 transition cursor-pointer ${
+                viewMode === "cards"
+                  ? "bg-white text-slate-900 shadow-2xs"
+                  : "text-slate-400 hover:text-slate-700"
+              }`}
+              title="Cards view"
+            >
+              <LayoutGrid className="h-3.5 w-3.5" />
+            </button>
+          </div>
+
           <button
             onClick={() => refetch()}
             disabled={isFetching}
-            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 active:scale-95 disabled:opacity-50"
-            title="Refresh list"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 shadow-2xs transition hover:bg-slate-50 cursor-pointer disabled:opacity-50"
+            title="Refresh specialization list"
           >
             <RotateCw
-              className={`h-3.5 w-3.5 ${isFetching ? "animate-spin text-blue-600" : ""}`}
+              className={`h-3 w-3 ${
+                isFetching ? "animate-spin text-slate-900" : "text-slate-400"
+              }`}
             />
-            <span>Refresh</span>
+            <span className="hidden sm:inline">Refresh</span>
           </button>
 
           <button
             onClick={handleOpenAdd}
-            className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600 px-4 py-2 text-xs font-semibold text-white shadow-md shadow-blue-500/20 transition hover:bg-blue-700 active:scale-95"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-medium text-white shadow-2xs transition hover:bg-slate-800 cursor-pointer"
           >
-            <Plus className="h-4 w-4" />
+            <Plus className="h-3.5 w-3.5" />
             <span>Add Specialization</span>
           </button>
         </div>
+      </div>
+
+      {/* KPI Stats Strip */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        {kpiCards.map((c) => {
+          const Icon = c.icon;
+          const isActive = statusFilter === c.key;
+
+          return (
+            <button
+              key={c.key}
+              type="button"
+              onClick={() => setStatusFilter(c.key)}
+              className={`flex items-center justify-between rounded-xl border p-3 sm:p-3.5 text-left transition-all duration-150 cursor-pointer ${
+                isActive
+                  ? "border-slate-800 bg-slate-50/90 shadow-2xs ring-1 ring-slate-800/10"
+                  : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/50"
+              }`}
+            >
+              <div>
+                <div className="flex items-center gap-1.5">
+                  <span className={`h-1.5 w-1.5 rounded-full ${c.dotColor}`} />
+                  <span className="text-[11px] font-medium text-slate-500">
+                    {c.label}
+                  </span>
+                </div>
+                <div className="mt-1 flex items-baseline gap-2">
+                  <span className="text-lg sm:text-xl font-semibold tracking-tight text-slate-900 tabular-nums">
+                    {c.value}
+                  </span>
+                </div>
+              </div>
+
+              <div
+                className={`flex h-7.5 w-7.5 items-center justify-center rounded-lg border transition-colors ${
+                  isActive
+                    ? "bg-slate-900 text-white border-slate-900"
+                    : "bg-slate-100/80 text-slate-500 border-slate-200/60"
+                }`}
+              >
+                <Icon className="h-3.5 w-3.5" />
+              </div>
+            </button>
+          );
+        })}
       </div>
 
       {/* Feedback Banner */}
@@ -291,7 +412,7 @@ export default function SpecializationManager() {
           </div>
           <button
             onClick={() => setFeedback(null)}
-            className="text-[11px] font-semibold underline"
+            className="text-[11px] font-semibold underline cursor-pointer"
           >
             Dismiss
           </button>
@@ -299,171 +420,292 @@ export default function SpecializationManager() {
       )}
 
       {/* Filter and Search Bar */}
-      <div className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
-        <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 rounded-xl border border-slate-200 bg-white p-2.5 shadow-2xs">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search specializations (e.g. Cardiology, Neurology)..."
-            className="w-full rounded-xl border border-slate-200 bg-slate-50/70 py-2 pl-9 pr-3 text-xs text-slate-900 outline-none transition focus:border-blue-600 focus:bg-white"
+            className="w-full rounded-lg border border-slate-200 bg-slate-50/60 py-1.5 pl-8.5 pr-8 text-xs text-slate-900 placeholder:text-slate-400 outline-none transition focus:border-slate-400 focus:bg-white"
           />
+          {searchTerm && (
+            <button
+              onClick={() => setSearchTerm("")}
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
+              title="Clear search"
+            >
+              <X className="h-3 w-3" />
+            </button>
+          )}
         </div>
 
-        <div className="min-w-[190px]">
+        <div className="w-full sm:w-56">
           <Dropdown
             options={statusOptions}
             value={statusFilter}
             onChange={(val) => setStatusFilter(val || "all")}
-            showBadgeInTrigger
+            triggerClassName="!py-1.5 !rounded-lg text-xs border-slate-200 bg-slate-50/60"
+            dropdownClassName="w-56 text-xs border-slate-200"
+            placeholder="All Specialties"
           />
         </div>
+
+        {(searchTerm || statusFilter !== "all") && (
+          <button
+            onClick={() => {
+              setSearchTerm("");
+              setStatusFilter("all");
+            }}
+            className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition cursor-pointer shrink-0"
+            title="Reset filters"
+          >
+            <RotateCw className="h-3 w-3 text-slate-400" />
+            <span>Reset</span>
+          </button>
+        )}
       </div>
 
-      {/* Specialization Cards Grid */}
+      {/* Main Content Area */}
       {isLoading ? (
-        <div className="flex h-48 items-center justify-center rounded-2xl border border-slate-200 bg-white p-8">
+        <div className="flex h-44 items-center justify-center rounded-xl border border-slate-200 bg-white p-8">
           <div className="flex flex-col items-center gap-2">
-            <div className="h-7 w-7 animate-spin rounded-full border-3 border-blue-600 border-t-transparent" />
+            <div className="h-5 w-5 animate-spin rounded-full border-2 border-slate-800 border-t-transparent" />
             <span className="text-xs text-slate-500">Loading specializations...</span>
           </div>
         </div>
       ) : filtered.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-white p-12 text-center">
-          <Layers className="h-10 w-10 text-slate-300 mb-2" />
-          <h3 className="text-sm font-bold text-slate-800">
+        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-300 bg-white p-12 text-center">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 text-slate-400 mb-2">
+            <Layers className="h-5 w-5" />
+          </div>
+          <h3 className="text-xs font-semibold text-slate-800">
             No specializations found
           </h3>
-          <p className="mt-1 text-xs text-slate-500 max-w-sm">
+          <p className="mt-1 text-[11px] text-slate-400 max-w-sm">
             {searchTerm
-              ? "No department matches your search criteria."
+              ? "No department matches your search criteria. Try a different keyword or reset filters."
               : "Get started by creating your hospital's first medical specialization."}
           </p>
           <button
             onClick={handleOpenAdd}
-            className="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-blue-600 px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-blue-700"
+            className="mt-3.5 inline-flex items-center gap-1.5 rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-medium text-white shadow-2xs hover:bg-slate-800 cursor-pointer"
           >
-            <Plus className="h-4 w-4" />
+            <Plus className="h-3.5 w-3.5" />
             <span>Create Specialization</span>
           </button>
         </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      ) : viewMode === "cards" ? (
+        /* Cards View */
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
           {filtered.map((spec) => {
             const specId = (spec._id || spec.Id)!;
             return (
               <div
                 key={specId}
-                className="group relative flex flex-col justify-between rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-blue-300 hover:shadow-md"
+                className="group relative flex flex-col justify-between rounded-xl border border-slate-200 bg-white p-4 shadow-2xs transition-all duration-150 hover:border-slate-300 hover:bg-slate-50/20"
               >
                 <div>
-                  <div className="flex items-start justify-between gap-3 mb-3">
-                    <div className="flex items-center gap-3">
-                      {spec.Icon ? (
-                        <img
-                          src={getAdminImageUrl(spec.Icon)}
-                          alt={spec.Name}
-                          className="h-11 w-11 rounded-xl object-cover ring-1 ring-slate-200"
-                        />
-                      ) : (
-                        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-blue-600 font-bold text-base">
-                          {spec.Name.charAt(0)}
-                        </div>
-                      )}
-                      <div>
-                        <h4 className="text-sm font-bold text-slate-900 group-hover:text-blue-600 transition">
+                  <div className="flex items-start justify-between gap-2.5 mb-2.5">
+                    <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                      <SpecializationIconBadge
+                        name={spec.Name}
+                        icon={spec.Icon}
+                        size="md"
+                      />
+                      <div className="min-w-0 flex-1">
+                        <h4
+                          onClick={() => handleOpenEdit(spec)}
+                          className="text-xs font-semibold text-slate-900 group-hover:text-teal-700 transition truncate cursor-pointer leading-tight"
+                          title={spec.Name}
+                        >
                           {spec.Name}
                         </h4>
-                        <span
-                          className={`inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider ${
-                            spec.IsActive
-                              ? "text-emerald-600"
-                              : "text-slate-400"
-                          }`}
-                        >
+                        <div className="mt-1 flex items-center gap-1.5">
                           <span
-                            className={`h-1.5 w-1.5 rounded-full ${
-                              spec.IsActive ? "bg-emerald-500" : "bg-slate-300"
+                            className={`inline-flex items-center gap-1 rounded-full px-2 py-0.2 text-[10px] font-medium border ${
+                              spec.IsActive
+                                ? "bg-emerald-50 text-emerald-700 border-emerald-200/70"
+                                : "bg-slate-100 text-slate-600 border-slate-200/80"
                             }`}
-                          />
-                          {spec.IsActive ? "Active" : "Inactive"}
-                        </span>
+                          >
+                            <span
+                              className={`h-1.5 w-1.5 rounded-full ${
+                                spec.IsActive ? "bg-emerald-500" : "bg-slate-400"
+                              }`}
+                            />
+                            {spec.IsActive ? "Active" : "Inactive"}
+                          </span>
+                        </div>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-1 shrink-0">
                       <button
+                        type="button"
                         onClick={() => handleOpenEdit(spec)}
-                        className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-blue-600 transition"
+                        className="inline-flex items-center justify-center h-6.5 w-6.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-900 shadow-2xs transition active:scale-95 cursor-pointer"
                         title="Edit specialization"
                       >
-                        <Edit2 className="h-4 w-4" />
+                        <Edit2 className="h-3 w-3" />
                       </button>
                       <button
+                        type="button"
                         onClick={() => setDeleteConfirmId(specId)}
-                        className="rounded-lg p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-600 transition"
+                        className="inline-flex items-center justify-center h-6.5 w-6.5 rounded-lg border border-slate-200 bg-white hover:bg-rose-50 text-slate-400 hover:text-rose-600 shadow-2xs transition active:scale-95 cursor-pointer"
                         title="Delete specialization"
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <Trash2 className="h-3 w-3" />
                       </button>
                     </div>
                   </div>
 
-                  <p className="text-xs text-slate-500 line-clamp-3 min-h-[3rem]">
-                    {spec.Description || "No department description provided."}
+                  <p
+                    className="text-xs text-slate-500 line-clamp-2 leading-relaxed min-h-[2.5rem]"
+                    title={spec.Description || ""}
+                  >
+                    {spec.Description || "No clinical description provided."}
                   </p>
                 </div>
 
-                <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
+                <div className="mt-3.5 pt-2.5 border-t border-slate-100 flex items-center justify-between">
                   <span className="text-[11px] text-slate-400">
                     {spec.createdAt
-                      ? `Added ${new Date(spec.createdAt).toLocaleDateString()}`
-                      : ""}
+                      ? `Added ${new Date(spec.createdAt).toLocaleDateString(undefined, {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        })}`
+                      : "Solanki Clinical Staff"}
                   </span>
 
                   <button
+                    type="button"
                     onClick={() => handleToggle(specId, spec.IsActive)}
                     disabled={isToggling}
-                    className={`rounded-lg px-2.5 py-1 text-xs font-semibold transition ${
+                    className={`inline-flex items-center gap-1 rounded-lg border px-2.5 py-1 text-[11px] font-medium shadow-2xs transition active:scale-95 cursor-pointer disabled:opacity-50 ${
                       spec.IsActive
-                        ? "border border-amber-200 bg-amber-50 text-amber-800 hover:bg-amber-100"
-                        : "border border-emerald-200 bg-emerald-50 text-emerald-800 hover:bg-emerald-100"
+                        ? "border-slate-200 bg-white hover:bg-amber-50 text-slate-600 hover:text-amber-800 hover:border-amber-200"
+                        : "border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
                     }`}
                   >
                     {spec.IsActive ? "Deactivate" : "Activate"}
                   </button>
                 </div>
-
-                {/* Delete Confirmation Overlay */}
-                {deleteConfirmId === specId && (
-                  <div className="absolute inset-0 z-10 flex flex-col items-center justify-center rounded-2xl bg-white/95 p-4 text-center backdrop-blur-xs">
-                    <p className="text-xs font-bold text-slate-900">
-                      Delete &quot;{spec.Name}&quot;?
-                    </p>
-                    <p className="mt-1 text-[11px] text-slate-500">
-                      This action cannot be undone.
-                    </p>
-                    <div className="mt-3 flex items-center gap-2">
-                      <button
-                        onClick={() => setDeleteConfirmId(null)}
-                        className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-100"
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        onClick={() => handleDelete(specId)}
-                        disabled={isDeleting}
-                        className="rounded-lg bg-red-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-red-700"
-                      >
-                        {isDeleting ? "Deleting..." : "Confirm Delete"}
-                      </button>
-                    </div>
-                  </div>
-                )}
               </div>
             );
           })}
+        </div>
+      ) : (
+        /* Table View */
+        <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-2xs">
+          <table className="w-full text-left text-xs">
+            <thead>
+              <tr className="border-b border-slate-200 bg-slate-50/75 text-[11px] font-medium text-slate-500 select-none">
+                <th className="py-3 pl-5 pr-3 w-[28%] font-medium">Specialization</th>
+                <th className="py-3 px-3 w-[42%] font-medium">Clinical Overview</th>
+                <th className="py-3 px-3 text-center w-[12%] font-medium">Status</th>
+                <th className="py-3 px-3 w-[10%] font-medium">Created</th>
+                <th className="py-3 pl-3 pr-5 text-right w-[8%] font-medium">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {filtered.map((spec) => {
+                const specId = (spec._id || spec.Id)!;
+                return (
+                  <tr
+                    key={specId}
+                    className="group transition-colors duration-150 hover:bg-slate-50/70"
+                  >
+                    <td className="py-3 pl-5 pr-3 align-middle">
+                      <div className="flex items-center gap-2.5">
+                        <SpecializationIconBadge
+                          name={spec.Name}
+                          icon={spec.Icon}
+                          size="sm"
+                        />
+                        <span
+                          onClick={() => handleOpenEdit(spec)}
+                          className="font-semibold text-slate-900 text-xs hover:text-teal-700 cursor-pointer transition-colors truncate"
+                          title="Click to edit"
+                        >
+                          {spec.Name}
+                        </span>
+                      </div>
+                    </td>
+
+                    <td className="py-3 px-3 align-middle">
+                      <p className="text-xs text-slate-500 line-clamp-1 max-w-md">
+                        {spec.Description || "No clinical description provided."}
+                      </p>
+                    </td>
+
+                    <td className="py-3 px-3 align-middle text-center">
+                      <span
+                        className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-medium border ${
+                          spec.IsActive
+                            ? "bg-emerald-50/80 text-emerald-700 border-emerald-200/70"
+                            : "bg-slate-100 text-slate-600 border-slate-200/80"
+                        }`}
+                      >
+                        <span
+                          className={`h-1.5 w-1.5 rounded-full ${
+                            spec.IsActive ? "bg-emerald-500" : "bg-slate-400"
+                          }`}
+                        />
+                        {spec.IsActive ? "Active" : "Inactive"}
+                      </span>
+                    </td>
+
+                    <td className="py-3 px-3 align-middle text-[11px] text-slate-400">
+                      {spec.createdAt
+                        ? new Date(spec.createdAt).toLocaleDateString(undefined, {
+                            month: "short",
+                            day: "numeric",
+                            year: "numeric",
+                          })
+                        : "—"}
+                    </td>
+
+                    <td className="py-3 pl-3 pr-5 align-middle text-right">
+                      <div className="flex items-center justify-end gap-1.5">
+                        <button
+                          type="button"
+                          onClick={() => handleToggle(specId, spec.IsActive)}
+                          disabled={isToggling}
+                          className={`inline-flex items-center rounded-lg border px-2 py-1 text-[11px] font-medium shadow-2xs transition active:scale-95 cursor-pointer disabled:opacity-50 ${
+                            spec.IsActive
+                              ? "border-slate-200 bg-white hover:bg-amber-50 text-slate-600 hover:text-amber-800 hover:border-amber-200"
+                              : "border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
+                          }`}
+                          title={spec.IsActive ? "Deactivate" : "Activate"}
+                        >
+                          {spec.IsActive ? "Deactivate" : "Activate"}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleOpenEdit(spec)}
+                          className="inline-flex items-center justify-center h-6.5 w-6.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-900 shadow-2xs transition active:scale-95 cursor-pointer"
+                          title="Edit specialization"
+                        >
+                          <Edit2 className="h-3 w-3" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setDeleteConfirmId(specId)}
+                          className="inline-flex items-center justify-center h-6.5 w-6.5 rounded-lg border border-slate-200 bg-white hover:bg-rose-50 text-slate-400 hover:text-rose-600 shadow-2xs transition active:scale-95 cursor-pointer"
+                          title="Delete specialization"
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
       )}
 
@@ -478,26 +720,26 @@ export default function SpecializationManager() {
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-md overflow-hidden rounded-3xl border border-slate-200/90 bg-white shadow-2xl transition-all duration-200 animate-in zoom-in-95"
+            className="w-full max-w-md overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl transition-all duration-200 animate-in zoom-in-95"
           >
             {/* Top Accent Bar */}
-            <div className="h-1.5 w-full bg-gradient-to-r from-[#008ba3] via-teal-500 to-cyan-400" />
+            <div className="h-1 w-full bg-[#008ba3]" />
 
-            <div className="flex items-center justify-between border-b border-slate-100 px-6 py-4">
-              <div className="flex items-center gap-3">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-50 to-teal-50 text-[#008ba3] border border-[#008ba3]/20 shadow-2xs">
-                  <Activity className="h-5 w-5" />
+            <div className="flex items-center justify-between border-b border-slate-100 px-5 py-3.5">
+              <div className="flex items-center gap-2.5">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-teal-50 text-[#008ba3] border border-teal-200/60 shadow-2xs">
+                  <Activity className="h-4 w-4" />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-slate-900">
+                  <h3 className="text-sm font-semibold text-slate-900">
                     {editingSpec
                       ? "Edit Specialization"
                       : "Add New Specialization"}
                   </h3>
-                  <p className="text-xs text-slate-500 mt-0.5">
+                  <p className="text-[11px] text-slate-400">
                     {editingSpec
-                      ? "Update department details and status"
-                      : "Create a new medical specialty"}
+                      ? "Update department details and availability"
+                      : "Create a new medical specialty department"}
                   </p>
                 </div>
               </div>
@@ -508,16 +750,16 @@ export default function SpecializationManager() {
                   setEditingSpec(null);
                 }}
                 aria-label="Close modal"
-                className="flex h-8 w-8 items-center justify-center rounded-full text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 cursor-pointer"
+                className="flex h-7 w-7 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 cursor-pointer"
               >
                 <X className="h-4 w-4" />
               </button>
             </div>
 
-            <form onSubmit={handleSave} className="px-6 py-4 space-y-4">
+            <form onSubmit={handleSave} className="p-5 space-y-3.5">
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
-                  Specialization Name *
+                <label className="block text-[11px] font-medium text-slate-700 mb-1">
+                  Specialization Name <span className="text-rose-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -525,29 +767,29 @@ export default function SpecializationManager() {
                   onChange={(e) => setName(e.target.value)}
                   placeholder="e.g. Cardiology, Orthopedics, Pediatrics"
                   required
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 px-3.5 text-sm text-slate-900 outline-none transition focus:border-blue-600 focus:bg-white"
+                  className="w-full rounded-lg border border-slate-200 bg-slate-50/60 py-2 px-3 text-xs text-slate-900 outline-none transition focus:border-slate-400 focus:bg-white"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
+                <label className="block text-[11px] font-medium text-slate-700 mb-1">
                   Description
                 </label>
                 <textarea
                   rows={3}
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Overview of medical services and treatments provided..."
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 px-3 text-xs text-slate-900 outline-none transition focus:border-blue-600 focus:bg-white resize-none"
+                  placeholder="Overview of medical services and clinical treatments provided..."
+                  className="w-full rounded-lg border border-slate-200 bg-slate-50/60 py-2 px-3 text-xs text-slate-900 outline-none transition focus:border-slate-400 focus:bg-white resize-none"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
+                <label className="block text-[11px] font-medium text-slate-700 mb-1">
                   Department Icon / Image (Optional)
                 </label>
-                <label className="flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-slate-300 bg-slate-50 py-3 px-3 text-xs font-medium text-slate-600 transition hover:border-blue-500 hover:bg-blue-50/30">
-                  <Upload className="h-4 w-4 text-slate-400" />
+                <label className="flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-dashed border-slate-300 bg-slate-50/60 py-2.5 px-3 text-xs font-medium text-slate-600 transition hover:border-slate-400 hover:bg-white">
+                  <Upload className="h-3.5 w-3.5 text-slate-400" />
                   <span className="truncate">
                     {iconBase64 ? "New icon selected" : "Choose icon image"}
                   </span>
@@ -566,13 +808,13 @@ export default function SpecializationManager() {
                         (editingSpec?.Icon ? getAdminImageUrl(editingSpec.Icon) : "")
                       }
                       alt="Icon Preview"
-                      className="h-8 w-8 rounded-lg object-cover ring-1 ring-blue-500"
+                      className="h-7 w-7 rounded-lg object-cover ring-1 ring-slate-200"
                     />
                     {iconBase64 && (
                       <button
                         type="button"
                         onClick={() => setIconBase64("")}
-                        className="text-[11px] text-red-500 hover:underline"
+                        className="text-[11px] text-rose-500 hover:underline cursor-pointer"
                       >
                         Remove
                       </button>
@@ -587,31 +829,31 @@ export default function SpecializationManager() {
                   id="isActiveToggle"
                   checked={isActive}
                   onChange={(e) => setIsActive(e.target.checked)}
-                  className="h-4 w-4 rounded text-blue-600 focus:ring-blue-500 border-slate-300"
+                  className="h-3.5 w-3.5 rounded border-slate-300 text-slate-900 focus:ring-slate-900"
                 />
                 <label
                   htmlFor="isActiveToggle"
-                  className="text-xs font-semibold text-slate-700 cursor-pointer"
+                  className="text-xs font-medium text-slate-700 cursor-pointer"
                 >
                   Active & Available for Doctor Assignment
                 </label>
               </div>
 
-              <div className="mt-6 flex justify-end gap-2.5 pt-3 border-t border-slate-100">
+              <div className="mt-5 flex justify-end gap-2 pt-3 border-t border-slate-100">
                 <button
                   type="button"
                   onClick={() => {
                     setIsAddModalOpen(false);
                     setEditingSpec(null);
                   }}
-                  className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-semibold text-slate-700 shadow-2xs transition-all hover:bg-slate-50 hover:border-slate-300 cursor-pointer"
+                  className="rounded-lg border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-medium text-slate-700 shadow-2xs transition hover:bg-slate-50 cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isCreating || isUpdating}
-                  className="inline-flex items-center gap-2 rounded-xl bg-[#008ba3] hover:bg-[#007a8f] px-5 py-2.5 text-xs font-bold text-white shadow-sm transition-all hover:shadow cursor-pointer disabled:opacity-50"
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-slate-900 px-3.5 py-1.5 text-xs font-medium text-white shadow-2xs transition hover:bg-slate-800 cursor-pointer disabled:opacity-50"
                 >
                   {isCreating || isUpdating ? (
                     <>
@@ -624,6 +866,59 @@ export default function SpecializationManager() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal (Unified for Table & Cards) */}
+      {deleteConfirmId && (
+        <div
+          onClick={() => setDeleteConfirmId(null)}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs transition-opacity duration-200 animate-in fade-in"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="w-full max-w-sm rounded-2xl border border-slate-200 bg-white p-5 shadow-xl transition-all duration-200 animate-in zoom-in-95"
+          >
+            <div className="flex items-center gap-3 mb-3">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-rose-50 text-rose-600 border border-rose-200/60 shadow-2xs">
+                <Trash2 className="h-4.5 w-4.5" />
+              </div>
+              <div>
+                <h4 className="text-sm font-semibold text-slate-900">
+                  Delete Specialization?
+                </h4>
+                <p className="text-[11px] text-slate-400">
+                  This action cannot be undone.
+                </p>
+              </div>
+            </div>
+
+            <p className="text-xs text-slate-600 mb-4 leading-relaxed">
+              Are you sure you want to delete &quot;
+              <span className="font-semibold text-slate-900">
+                {deletingSpec?.Name || "this specialization"}
+              </span>
+              &quot;? It will be removed from doctor assignment across the hospital.
+            </p>
+
+            <div className="flex items-center justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setDeleteConfirmId(null)}
+                className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 transition cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => handleDelete(deleteConfirmId)}
+                disabled={isDeleting}
+                className="inline-flex items-center gap-1.5 rounded-lg bg-rose-600 px-3.5 py-1.5 text-xs font-medium text-white shadow-2xs hover:bg-rose-700 transition cursor-pointer disabled:opacity-50"
+              >
+                {isDeleting ? "Deleting..." : "Confirm Delete"}
+              </button>
+            </div>
           </div>
         </div>
       )}
