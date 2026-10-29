@@ -34,26 +34,21 @@ export default function ManagePermissionsModal({
   onClose,
   onSuccess,
 }: ManagePermissionsModalProps) {
-  const [selectedPermissions, setSelectedPermissions] = useState<string[]>([]);
+  const isTargetSuperAdmin = isSuperAdmin(admin);
+
+  const [selectedPermissions, setSelectedPermissions] = useState<string[]>(() => {
+    if (!admin) return [];
+    if (isTargetSuperAdmin) {
+      return ALL_PERMISSIONS;
+    }
+    return (admin.Permissions || [])
+      .map((p) => String(p).trim().toLowerCase())
+      .filter((p) => ALL_PERMISSIONS.includes(p));
+  });
   const [error, setError] = useState<string | null>(null);
 
   const [updatePermissionsApi, { isLoading: isSaving }] =
     useUpdateAdminPermissionsMutation();
-
-  const isTargetSuperAdmin = isSuperAdmin(admin);
-
-  useEffect(() => {
-    if (!admin) return;
-    setError(null);
-    if (isTargetSuperAdmin) {
-      setSelectedPermissions(ALL_PERMISSIONS);
-    } else {
-      const current = (admin.Permissions || [])
-        .map((p) => String(p).trim().toLowerCase())
-        .filter((p) => ALL_PERMISSIONS.includes(p));
-      setSelectedPermissions(current);
-    }
-  }, [admin, isTargetSuperAdmin]);
 
   // Handle ESC key to close
   useEffect(() => {

@@ -7,7 +7,6 @@ import {
   CalendarCheck,
   BookOpen,
   Users,
-  Shield,
 } from "lucide-react";
 
 export interface PermissionConfig {

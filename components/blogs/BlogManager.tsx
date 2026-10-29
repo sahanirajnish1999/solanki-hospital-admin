@@ -67,8 +67,8 @@ export default function BlogManager() {
     statusFilter === "published"
       ? true
       : statusFilter === "draft"
-      ? false
-      : undefined;
+        ? false
+        : undefined;
 
   const {
     data: blogsResponse,
@@ -84,7 +84,8 @@ export default function BlogManager() {
   });
 
   const [deleteBlog, { isLoading: isDeleting }] = useDeleteBlogMutation();
-  const [toggleStatus, { isLoading: isToggling }] = useToggleBlogStatusMutation();
+  const [toggleStatus, { isLoading: isToggling }] =
+    useToggleBlogStatusMutation();
 
   const blogs = useMemo(() => blogsResponse?.Data || [], [blogsResponse?.Data]);
   const pagination = blogsResponse?.Pagination;
@@ -119,7 +120,7 @@ export default function BlogManager() {
         badgeColor: "bg-amber-100 text-amber-800",
       },
     ],
-    []
+    [],
   );
 
   // Calculate local stats from current list / responses
@@ -189,7 +190,10 @@ export default function BlogManager() {
       });
 
       // Update selected blog in details modal if open
-      if (selectedBlogForDetails && (selectedBlogForDetails._id === id || selectedBlogForDetails.Id === id)) {
+      if (
+        selectedBlogForDetails &&
+        (selectedBlogForDetails._id === id || selectedBlogForDetails.Id === id)
+      ) {
         setSelectedBlogForDetails({
           ...selectedBlogForDetails,
           IsPublished: !currentStatus,
@@ -386,7 +390,9 @@ export default function BlogManager() {
         <div className="flex h-52 items-center justify-center rounded-xl border border-slate-200 bg-white p-8">
           <div className="flex flex-col items-center gap-2">
             <div className="h-5 w-5 animate-spin rounded-full border-2 border-slate-800 border-t-transparent" />
-            <span className="text-xs text-slate-500">Loading blog articles...</span>
+            <span className="text-xs text-slate-500">
+              Loading blog articles...
+            </span>
           </div>
         </div>
       ) : blogs.length === 0 ? (
@@ -489,7 +495,8 @@ export default function BlogManager() {
                         <div className="mt-2.5 flex items-center gap-1.5 text-[11px] text-teal-700 font-medium">
                           <Sparkles className="h-3 w-3 text-teal-600 shrink-0" />
                           <span className="truncate">
-                            {blog.KeyClinicalHighlights.length} clinical highlights
+                            {blog.KeyClinicalHighlights.length} clinical
+                            highlights
                           </span>
                         </div>
                       )}
@@ -541,19 +548,26 @@ export default function BlogManager() {
             <table className="w-full text-left text-xs">
               <thead>
                 <tr className="border-b border-slate-200 bg-slate-50/75 text-[11px] font-medium text-slate-500 select-none dark:border-slate-800 dark:bg-slate-900/80 dark:text-slate-400">
-                  <th className="py-3 pl-4 pr-3 w-[30%] font-medium">Article &amp; Clinical Overview</th>
+                  <th className="py-3 pl-4 pr-3 w-[30%] font-medium">
+                    Article &amp; Clinical Overview
+                  </th>
                   <th className="py-3 px-3 w-[18%] font-medium">Category</th>
                   <th className="py-3 px-3 w-[14%] font-medium">Highlights</th>
                   <th className="py-3 px-3 w-[12%] font-medium">Author</th>
-                  <th className="py-3 px-3 text-center w-[12%] font-medium">Status</th>
-                  <th className="py-3 pl-3 pr-4 text-right w-[14%] font-medium">Actions</th>
+                  <th className="py-3 px-3 text-center w-[12%] font-medium">
+                    Status
+                  </th>
+                  <th className="py-3 pl-3 pr-4 text-right w-[14%] font-medium">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {blogs.map((blog) => {
                   const blogId = (blog._id || blog.Id)!;
                   const authorName =
-                    typeof blog.CreatedBy === "object" && blog.CreatedBy !== null
+                    typeof blog.CreatedBy === "object" &&
+                    blog.CreatedBy !== null
                       ? blog.CreatedBy.Name || "Dr. Solanki"
                       : "Dr. Solanki";
 
@@ -607,7 +621,9 @@ export default function BlogManager() {
                             title={blog.KeyClinicalHighlights.join(" • ")}
                           >
                             <Sparkles className="h-2.5 w-2.5 text-teal-600" />
-                            <span>{blog.KeyClinicalHighlights.length} points</span>
+                            <span>
+                              {blog.KeyClinicalHighlights.length} points
+                            </span>
                           </span>
                         ) : (
                           <span className="text-[11px] text-slate-300">—</span>
@@ -626,7 +642,9 @@ export default function BlogManager() {
                       <td className="py-3 px-3 align-middle text-center">
                         <button
                           type="button"
-                          onClick={() => handleTogglePublish(blogId, blog.IsPublished)}
+                          onClick={() =>
+                            handleTogglePublish(blogId, blog.IsPublished)
+                          }
                           disabled={isToggling}
                           className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-medium border transition cursor-pointer disabled:opacity-50 ${
                             blog.IsPublished
@@ -637,7 +655,9 @@ export default function BlogManager() {
                         >
                           <span
                             className={`h-1.5 w-1.5 rounded-full ${
-                              blog.IsPublished ? "bg-emerald-500" : "bg-amber-500"
+                              blog.IsPublished
+                                ? "bg-emerald-500"
+                                : "bg-amber-500"
                             }`}
                           />
                           {blog.IsPublished ? "Published" : "Draft"}
@@ -686,8 +706,10 @@ export default function BlogManager() {
       {totalPages > 1 && (
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2 text-xs text-slate-500">
           <div>
-            Showing Page <span className="font-semibold text-slate-800">{page}</span> of{" "}
-            <span className="font-semibold text-slate-800">{totalPages}</span> ({totalBlogs} total articles)
+            Showing Page{" "}
+            <span className="font-semibold text-slate-800">{page}</span> of{" "}
+            <span className="font-semibold text-slate-800">{totalPages}</span> (
+            {totalBlogs} total articles)
           </div>
 
           <div className="flex items-center gap-1.5">

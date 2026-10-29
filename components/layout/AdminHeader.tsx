@@ -4,14 +4,9 @@ import React from "react";
 import { useAppSelector } from "@/redux/hooks";
 import { getAdminImageUrl } from "@/redux/utils/imageHelper";
 import { User } from "lucide-react";
-import type { AdminView } from "./AdminSidebar";
 import ThemeToggle from "@/components/theme/ThemeToggle";
 
-interface AdminHeaderProps {
-  activeView?: AdminView;
-}
-
-export default function AdminHeader({ activeView }: AdminHeaderProps) {
+export default function AdminHeader() {
   const { admin, isSuperAdmin } = useAppSelector((state) => state.auth);
 
   return (

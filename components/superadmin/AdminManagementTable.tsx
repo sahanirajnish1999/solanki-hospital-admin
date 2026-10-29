@@ -11,7 +11,6 @@ import type { IAdmin } from "@/redux/types/admin.types";
 import {
   ALL_PERMISSIONS,
   PERMISSION_CONFIG,
-  isSuperAdmin,
 } from "@/redux/utils/permissions";
 import ManagePermissionsModal from "./ManagePermissionsModal";
 import CreateAdminModal from "./CreateAdminModal";
@@ -385,23 +384,28 @@ export default function AdminManagementTable() {
       </div>
 
       {/* Superadmin Manage Permissions Modal */}
-      <ManagePermissionsModal
-        isOpen={Boolean(managingAdmin)}
-        admin={managingAdmin}
-        onClose={() => setManagingAdmin(null)}
-        onSuccess={(msg) => {
-          setActionMessage({ type: "success", text: msg });
-        }}
-      />
+      {managingAdmin && (
+        <ManagePermissionsModal
+          key={managingAdmin._id || managingAdmin.Id}
+          isOpen={true}
+          admin={managingAdmin}
+          onClose={() => setManagingAdmin(null)}
+          onSuccess={(msg) => {
+            setActionMessage({ type: "success", text: msg });
+          }}
+        />
+      )}
 
       {/* Superadmin Create Admin Modal */}
-      <CreateAdminModal
-        isOpen={isCreateModalOpen}
-        onClose={() => setIsCreateModalOpen(false)}
-        onSuccess={(msg) => {
-          setActionMessage({ type: "success", text: msg });
-        }}
-      />
+      {isCreateModalOpen && (
+        <CreateAdminModal
+          isOpen={true}
+          onClose={() => setIsCreateModalOpen(false)}
+          onSuccess={(msg) => {
+            setActionMessage({ type: "success", text: msg });
+          }}
+        />
+      )}
     </div>
   );
 }

@@ -5,9 +5,9 @@ export function extractHighlights(blog?: IBlog | null): string[] {
 
   const raw =
     blog.KeyClinicalHighlights ??
-    (blog as Record<string, any>).keyClinicalHighlights ??
-    (blog as Record<string, any>).clinicalHighlights ??
-    (blog as Record<string, any>).highlights;
+    (blog as unknown as Record<string, unknown>).keyClinicalHighlights ??
+    (blog as unknown as Record<string, unknown>).clinicalHighlights ??
+    (blog as unknown as Record<string, unknown>).highlights;
 
   if (Array.isArray(raw)) {
     return raw.map((item) => String(item).trim()).filter(Boolean);

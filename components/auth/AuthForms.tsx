@@ -11,9 +11,7 @@ import {
   AlertCircle,
   Eye,
   EyeOff,
-  Hospital,
   ArrowRight,
-  ShieldCheck,
   Loader2,
 } from "lucide-react";
 

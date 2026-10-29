@@ -14,7 +14,6 @@ import {
   UserCheck,
   CalendarCheck,
   LogOut,
-  Hospital,
   BookOpen,
 } from "lucide-react";
 

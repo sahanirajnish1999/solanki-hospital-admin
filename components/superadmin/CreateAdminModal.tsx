@@ -51,20 +51,6 @@ export default function CreateAdminModal({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [createAdminApi, { isLoading }] = useCreateAdminMutation();
 
-  // Reset form when modal opens
-  useEffect(() => {
-    if (isOpen) {
-      setName("");
-      setEmail("");
-      setPassword("");
-      setPhone("");
-      setShowPassword(false);
-      setSelectedPermissions(DEFAULT_ADMIN_PERMISSIONS);
-      setImageBase64("");
-      setError(null);
-    }
-  }, [isOpen]);
-
   // Handle ESC key
   useEffect(() => {
     if (!isOpen) return;

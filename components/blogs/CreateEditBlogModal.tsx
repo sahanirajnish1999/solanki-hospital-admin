@@ -51,55 +51,77 @@ export default function CreateEditBlogModal({
       skip: !isEditing || !blogId || !isOpen,
     });
 
-  // Form states initialized directly from blogToEdit (fresh instance per key)
-  const [title, setTitle] = useState(blogToEdit?.Title || "");
-  const [category, setCategory] = useState(
-    blogToEdit?.Category || categoriesList[0] || "SPORTS INJURY",
+  if (!isOpen) return null;
+
+  if (isEditing && isLoadingFullBlog) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs animate-in fade-in">
+        <div className="flex flex-col items-center gap-3 rounded-2xl bg-white p-8 shadow-xl dark:bg-[#121215] dark:border dark:border-slate-800">
+          <div className="h-6 w-6 animate-spin rounded-full border-2 border-slate-900 border-t-transparent dark:border-slate-100" />
+          <p className="text-xs text-slate-500 dark:text-slate-400">
+            Loading blog details...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  const initialBlog =
+    isEditing && fullBlogResponse?.Data
+      ? fullBlogResponse.Data
+      : blogToEdit;
+
+  return (
+    <BlogFormInner
+      key={initialBlog?._id || initialBlog?.Id || "new"}
+      initialBlog={initialBlog}
+      isOpen={isOpen}
+      onClose={onClose}
+      onSuccess={onSuccess}
+    />
   );
-  const [content, setContent] = useState(blogToEdit?.Content || "");
+}
+
+function BlogFormInner({
+  initialBlog,
+  isOpen,
+  onClose,
+  onSuccess,
+}: {
+  initialBlog?: IBlog | null;
+  isOpen: boolean;
+  onClose: () => void;
+  onSuccess?: (message: string) => void;
+}) {
+  const isEditing = Boolean(initialBlog);
+  const blogId = initialBlog?._id || initialBlog?.Id;
+
+  // Form states initialized directly from initialBlog (fresh instance per key)
+  const [title, setTitle] = useState(initialBlog?.Title || "");
+  const [category, setCategory] = useState(
+    initialBlog?.Category || categoriesList[0] || "SPORTS INJURY",
+  );
+  const [content, setContent] = useState(initialBlog?.Content || "");
   const [highlights, setHighlights] = useState<string[]>(() =>
-    extractHighlights(blogToEdit),
+    extractHighlights(initialBlog),
   );
   const [highlightInput, setHighlightInput] = useState("");
   const [consultationNote, setConsultationNote] = useState(
-    blogToEdit?.ConsultationNote || "",
+    initialBlog?.ConsultationNote || "",
   );
   const [featuredImage, setFeaturedImage] = useState(
-    blogToEdit?.FeaturedImage || "",
+    initialBlog?.FeaturedImage || "",
   );
   const [imagePreview, setImagePreview] = useState(
-    blogToEdit?.FeaturedImage ? getAdminImageUrl(blogToEdit.FeaturedImage) : "",
+    initialBlog?.FeaturedImage
+      ? getAdminImageUrl(initialBlog.FeaturedImage)
+      : "",
   );
   const [isPublished, setIsPublished] = useState(
-    blogToEdit?.IsPublished ?? true,
+    initialBlog?.IsPublished ?? true,
   );
 
   const [formError, setFormError] = useState<string | null>(null);
-
-  // Sync state when full blog data arrives from GET /v1/api/blog/:id
-  useEffect(() => {
-    if (!isEditing || !fullBlogResponse?.Data) return;
-    const fullBlog = fullBlogResponse.Data;
-
-    if (fullBlog.Title) setTitle(fullBlog.Title);
-    if (fullBlog.Category) setCategory(fullBlog.Category);
-    if (fullBlog.Content) setContent(fullBlog.Content);
-    if (fullBlog.ConsultationNote !== undefined) {
-      setConsultationNote(fullBlog.ConsultationNote || "");
-    }
-    if (fullBlog.FeaturedImage) {
-      setFeaturedImage(fullBlog.FeaturedImage);
-      setImagePreview(getAdminImageUrl(fullBlog.FeaturedImage));
-    }
-    if (fullBlog.IsPublished !== undefined) {
-      setIsPublished(Boolean(fullBlog.IsPublished));
-    }
-
-    const fetchedHighlights = extractHighlights(fullBlog);
-    if (fetchedHighlights.length > 0) {
-      setHighlights(fetchedHighlights);
-    }
-  }, [isEditing, fullBlogResponse]);
 
   // RTK Query Mutations
   const [createBlog, { isLoading: isCreating }] = useCreateBlogMutation();
@@ -189,8 +211,8 @@ export default function CreateEditBlogModal({
     }
 
     try {
-      if (isEditing && blogToEdit) {
-        const id = (blogToEdit._id || blogToEdit.Id)!;
+      if (isEditing && initialBlog && blogId) {
+        const id = blogId;
         const res = await updateBlog({
           id,
           Title: title.trim(),
@@ -453,11 +475,6 @@ export default function CreateEditBlogModal({
                 <span>Key Clinical Highlights</span>
               </label>
               <div className="flex items-center gap-2">
-                {isLoadingFullBlog && (
-                  <span className="text-[10px] text-teal-600 animate-pulse font-medium">
-                    Syncing points...
-                  </span>
-                )}
                 <span className="text-[10px] font-medium text-slate-400">
                   {highlights.length} added
                 </span>

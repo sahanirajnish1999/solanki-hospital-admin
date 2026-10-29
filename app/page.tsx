@@ -95,7 +95,7 @@ export default function Home() {
           {/* Main Content Area */}
           <div className="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto">
             {/* Top Header */}
-            <AdminHeader activeView={activeView} />
+            <AdminHeader />
 
             {/* Dynamic View Body */}
             <main className="flex-1 p-6 max-w-7xl w-full mx-auto">
