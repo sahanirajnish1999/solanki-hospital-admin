@@ -59,6 +59,25 @@ export interface LoginResponseData {
   Token: string;
 }
 
+// 3. Forgot Password Flow
+export interface ForgotPasswordRequest {
+  Email: string;
+}
+
+export interface VerifyOtpRequest {
+  Email: string;
+  Otp: string;
+}
+
+export interface VerifyOtpResponseData {
+  ResetToken: string;
+}
+
+export interface ResetPasswordRequest {
+  ResetToken: string;
+  NewPassword: string;
+}
+
 
 // 4. Update Profile
 export interface UpdateProfileRequest {

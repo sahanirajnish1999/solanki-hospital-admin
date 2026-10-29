@@ -5,6 +5,10 @@ import type {
   IAdmin,
   LoginRequest,
   LoginResponseData,
+  ForgotPasswordRequest,
+  VerifyOtpRequest,
+  VerifyOtpResponseData,
+  ResetPasswordRequest,
   SignupRequest,
   SignupResponseData,
   UpdateProfileRequest,
@@ -55,6 +59,36 @@ export const adminApi = createApi({
         body: credentials,
       }),
       invalidatesTags: ["AdminProfile"],
+    }),
+
+    // 3. Forgot Password - Request OTP (Public)
+    forgotPassword: builder.mutation<ApiResponse<null>, ForgotPasswordRequest>({
+      query: (body) => ({
+        url: "/forgot-password",
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: [],
+    }),
+
+    // 4. Verify OTP (Public)
+    verifyOtp: builder.mutation<ApiResponse<VerifyOtpResponseData>, VerifyOtpRequest>({
+      query: (body) => ({
+        url: "/verify-otp",
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: [],
+    }),
+
+    // 5. Reset Password (Public)
+    resetPassword: builder.mutation<ApiResponse<null>, ResetPasswordRequest>({
+      query: (body) => ({
+        url: "/reset-password",
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: [],
     }),
 
     // 3. Get Admin Profile (Protected)
@@ -160,6 +194,9 @@ export const adminApi = createApi({
 export const {
   useSignupMutation,
   useLoginMutation,
+  useForgotPasswordMutation,
+  useVerifyOtpMutation,
+  useResetPasswordMutation,
   useGetProfileQuery,
   useLazyGetProfileQuery,
   useUpdateProfileMutation,
