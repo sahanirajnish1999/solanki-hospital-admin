@@ -6,6 +6,7 @@ export interface IAdmin {
   Name: string;
   Email: string;
   Role: AdminRole;
+  Permissions?: string[];
   Phone?: string;
   ProfileImage?: string;
   IsActive: boolean;
@@ -89,6 +90,12 @@ export interface UpdateAdminStatusRequest {
   id: string;
   IsActive?: boolean;
   Role?: AdminRole;
+}
+
+// 8. Update Admin Permissions (Superadmin only via PUT /v1/api/admin/permissions/:adminId)
+export interface UpdateAdminPermissionsRequest {
+  adminId: string;
+  Permissions: string[];
 }
 
 // Auth State in Redux

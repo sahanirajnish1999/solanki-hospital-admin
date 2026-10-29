@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { logout } from "@/redux/features/authSlice";
 import { useLogoutMutation } from "@/redux/api/adminApi";
 import { getAdminImageUrl } from "@/redux/utils/imageHelper";
+import { hasPermission } from "@/redux/utils/permissions";
 import {
   LayoutDashboard,
   Stethoscope,
@@ -49,31 +50,36 @@ export default function AdminSidebar({
     }
   };
 
-  const navItems = [
+  const allNavItems = [
     {
       id: "dashboard" as AdminView,
       label: "Dashboard",
       icon: LayoutDashboard,
+      permission: "dashboard",
     },
     {
       id: "specializations" as AdminView,
       label: "Specializations",
       icon: Activity,
+      permission: "specializations",
     },
     {
       id: "doctors" as AdminView,
       label: "Doctors Directory",
       icon: Stethoscope,
+      permission: "doctors",
     },
     {
       id: "appointments" as AdminView,
       label: "Appointments",
       icon: CalendarCheck,
+      permission: "appointments",
     },
     {
       id: "blogs" as AdminView,
       label: "Medical Blogs",
       icon: BookOpen,
+      permission: "blogs",
     },
     ...(isSuperAdmin
       ? [
@@ -81,6 +87,7 @@ export default function AdminSidebar({
             id: "admins" as AdminView,
             label: "Administrators",
             icon: Users,
+            permission: "admins",
           },
         ]
       : []),
@@ -90,6 +97,11 @@ export default function AdminSidebar({
       icon: UserCheck,
     },
   ];
+
+  const navItems = allNavItems.filter((item) => {
+    if (!item.permission) return true;
+    return hasPermission(admin, item.permission);
+  });
 
   return (
     <aside className="w-60 shrink-0 border-r border-slate-200/90 bg-white flex flex-col justify-between h-screen sticky top-0 z-20 overflow-y-auto select-none">

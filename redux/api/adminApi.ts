@@ -12,6 +12,7 @@ import type {
   GetAllAdminsParams,
   GetAllAdminsResponse,
   UpdateAdminStatusRequest,
+  UpdateAdminPermissionsRequest,
 } from "../types/admin.types";
 import { API_BASE_URL } from "../utils/imageHelper";
 
@@ -123,6 +124,23 @@ export const adminApi = createApi({
         "AdminProfile",
       ],
     }),
+
+    // 9. Update Admin Permissions (Superadmin only via PUT /permissions/:adminId)
+    updateAdminPermissions: builder.mutation<
+      ApiResponse<IAdmin>,
+      UpdateAdminPermissionsRequest
+    >({
+      query: ({ adminId, Permissions }) => ({
+        url: `/permissions/${adminId}`,
+        method: "PUT",
+        body: { Permissions },
+      }),
+      invalidatesTags: (_result, _error, { adminId }) => [
+        { type: "AdminList", id: adminId },
+        { type: "AdminList", id: "LIST" },
+        "AdminProfile",
+      ],
+    }),
   }),
 });
 
@@ -136,4 +154,5 @@ export const {
   useLogoutMutation,
   useGetAllAdminsQuery,
   useUpdateAdminStatusMutation,
+  useUpdateAdminPermissionsMutation,
 } = adminApi;

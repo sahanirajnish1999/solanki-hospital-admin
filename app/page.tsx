@@ -14,10 +14,11 @@ import AuthForms from "@/components/auth/AuthForms";
 import ThemeToggle from "@/components/theme/ThemeToggle";
 import AppLoader from "@/components/common/AppLoader";
 import { useAppSelector } from "@/redux/hooks";
+import { hasPermission } from "@/redux/utils/permissions";
 import { ShieldCheck, Hospital, Zap, Lock } from "lucide-react";
 
 export default function Home() {
-  const { isAuthenticated, isSuperAdmin, isInitialized } = useAppSelector(
+  const { isAuthenticated, isSuperAdmin, isInitialized, admin } = useAppSelector(
     (state) => state.auth
   );
   // Restore previous active view after page reload
@@ -111,41 +112,67 @@ export default function Home() {
 
             {/* Dynamic View Body */}
             <main className="flex-1 p-6 max-w-7xl w-full mx-auto">
-              {activeView === "dashboard" && (
-                <DashboardOverview setActiveView={handleSetActiveView} />
-              )}
-
-              {activeView === "specializations" && <SpecializationManager />}
-
-              {activeView === "doctors" && <DoctorManager />}
-
-              {activeView === "appointments" && <AppointmentManager />}
-
-              {activeView === "blogs" && <BlogManager />}
-
-              {activeView === "admins" && isSuperAdmin && (
-                <div className="space-y-4">
-                  <AdminManagementTable />
-                </div>
-              )}
-
-              {activeView === "profile" && (
-                <div className="space-y-4 max-w-4xl mx-auto">
-                  <div className="flex items-center gap-2.5">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-900 text-teal-400 shadow-2xs">
-                      <ShieldCheck className="h-4 w-4" />
-                    </div>
-                    <div>
-                      <h2 className="text-base font-semibold text-slate-900 tracking-tight">
-                        My Profile &amp; Account Security
-                      </h2>
-                      <p className="text-xs text-slate-400">
-                        View and manage your administrator contact information and password
-                      </p>
-                    </div>
+              {!isSuperAdmin &&
+              activeView !== "profile" &&
+              !hasPermission(admin, activeView) ? (
+                <div className="rounded-2xl border border-amber-200 bg-amber-50/70 p-6 text-center max-w-lg mx-auto my-12 dark:border-amber-900/40 dark:bg-amber-950/20 shadow-xs">
+                  <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-100 text-amber-600 dark:bg-amber-950/50 dark:text-amber-400 mb-3">
+                    <Lock className="h-6 w-6" />
                   </div>
-                  <ProfileCard />
+                  <h3 className="text-base font-bold text-slate-900 dark:text-slate-100">
+                    Module Access Restricted
+                  </h3>
+                  <p className="mt-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                    You do not currently have administrative permission to access this hospital section.
+                    Please contact your hospital Superadmin to request module privileges.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => handleSetActiveView("dashboard")}
+                    className="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-4 py-2 text-xs font-semibold text-white shadow-2xs hover:bg-slate-800 dark:bg-slate-800 dark:hover:bg-slate-700 cursor-pointer"
+                  >
+                    Return to Dashboard
+                  </button>
                 </div>
+              ) : (
+                <>
+                  {activeView === "dashboard" && (
+                    <DashboardOverview setActiveView={handleSetActiveView} />
+                  )}
+
+                  {activeView === "specializations" && <SpecializationManager />}
+
+                  {activeView === "doctors" && <DoctorManager />}
+
+                  {activeView === "appointments" && <AppointmentManager />}
+
+                  {activeView === "blogs" && <BlogManager />}
+
+                  {activeView === "admins" && isSuperAdmin && (
+                    <div className="space-y-4">
+                      <AdminManagementTable />
+                    </div>
+                  )}
+
+                  {activeView === "profile" && (
+                    <div className="space-y-4 max-w-4xl mx-auto">
+                      <div className="flex items-center gap-2.5">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-900 text-teal-400 shadow-2xs">
+                          <ShieldCheck className="h-4 w-4" />
+                        </div>
+                        <div>
+                          <h2 className="text-base font-semibold text-slate-900 tracking-tight">
+                            My Profile &amp; Account Security
+                          </h2>
+                          <p className="text-xs text-slate-400">
+                            View and manage your administrator contact information and password
+                          </p>
+                        </div>
+                      </div>
+                      <ProfileCard />
+                    </div>
+                  )}
+                </>
               )}
             </main>
           </div>

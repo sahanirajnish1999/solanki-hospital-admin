@@ -152,6 +152,26 @@ export const authSlice = createSlice({
       }
     );
 
+    // Update Admin Permissions fulfilled
+    builder.addMatcher(
+      adminApi.endpoints.updateAdminPermissions.matchFulfilled,
+      (state, action) => {
+        const updated = action.payload.Data;
+        if (
+          updated &&
+          (state.admin?._id === updated._id ||
+            state.admin?.Id === updated._id ||
+            state.admin?._id === updated.Id)
+        ) {
+          state.admin = updated;
+          state.isSuperAdmin = updated.Role === "superadmin";
+          if (typeof window !== "undefined") {
+            localStorage.setItem("admin_profile", JSON.stringify(updated));
+          }
+        }
+      }
+    );
+
     // Logout fulfilled
     builder.addMatcher(
       adminApi.endpoints.logout.matchFulfilled,
