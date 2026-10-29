@@ -7,7 +7,6 @@ import AppointmentStatsCards from "./AppointmentStatsCards";
 import AppointmentTableView from "./AppointmentTableView";
 import AppointmentDetailsModal from "./AppointmentDetailsModal";
 import {
-  CalendarCheck,
   Search,
   RotateCw,
   ChevronLeft,
@@ -90,19 +89,9 @@ export default function AppointmentManager() {
     <div className="space-y-6">
       {/* Top Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-100 text-blue-700">
-            <CalendarCheck className="h-5 w-5" />
-          </div>
-          <div>
-            <h2 className="text-xl font-bold text-slate-900 tracking-tight">
-              Appointment Management
-            </h2>
-            <p className="text-xs text-slate-500">
-              Live consultation queues, tokens, schedule slots, and payment records
-            </p>
-          </div>
-        </div>
+        <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100 tracking-tight">
+          Appointments
+        </h2>
 
         <div className="flex items-center gap-2">
           <button

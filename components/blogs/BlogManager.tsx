@@ -214,24 +214,9 @@ export default function BlogManager() {
     <div className="space-y-6">
       {/* 1. Header Toolbar */}
       <div className="flex flex-col gap-3.5 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-900 text-teal-400 shadow-2xs">
-            <BookOpen className="h-4 w-4" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h2 className="text-base font-semibold text-slate-900 tracking-tight">
-                Medical Blog Articles &amp; Insights
-              </h2>
-              <span className="rounded-md bg-slate-100 px-1.5 py-0.5 text-[10px] font-medium text-slate-600 border border-slate-200/60">
-                {totalBlogs} Articles
-              </span>
-            </div>
-            <p className="text-xs text-slate-400">
-              Publish patient education, clinical highlights, and surgical updates across 50 orthopedic specialties
-            </p>
-          </div>
-        </div>
+        <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100 tracking-tight">
+          Blogs
+        </h2>
 
         <div className="flex items-center gap-2">
           {/* View Mode Toggle */}

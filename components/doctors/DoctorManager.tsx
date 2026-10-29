@@ -13,7 +13,6 @@ import type {
 } from "@/redux/types/doctor.types";
 import { getErrorMessage } from "@/redux";
 import {
-  Stethoscope,
   Search,
   RotateCw,
   Plus,
@@ -163,19 +162,9 @@ export default function DoctorManager() {
     <div className="space-y-6">
       {/* Top Header */}
       <div className="flex flex-col gap-3.5 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-900 text-teal-400 shadow-2xs dark:bg-slate-800 dark:border dark:border-slate-700">
-            <Stethoscope className="h-4.5 w-4.5" />
-          </div>
-          <div>
-            <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100 tracking-tight">
-              Doctor Administration
-            </h2>
-            <p className="text-xs text-slate-400 dark:text-slate-500">
-              Staff registration, profile verification, and clinical schedule management
-            </p>
-          </div>
-        </div>
+        <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100 tracking-tight">
+          Doctors
+        </h2>
 
         <div className="flex items-center gap-2">
           {/* View mode toggle */}

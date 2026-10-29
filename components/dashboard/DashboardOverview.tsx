@@ -138,11 +138,6 @@ export default function DashboardOverview({
           <div className="space-y-2">
             {/* Top Tagline Badges */}
             <div className="flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-700 bg-slate-800/80 px-2.5 py-0.5 text-[11px] font-medium text-slate-300">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-                Hospital Admin Console
-              </span>
-
               <span className="inline-flex items-center gap-1 rounded-full border border-slate-700 bg-slate-800/60 px-2.5 py-0.5 text-[11px] text-slate-400">
                 <Calendar className="h-3 w-3 text-slate-400" />
                 {currentDateString}
@@ -155,15 +150,11 @@ export default function DashboardOverview({
               )}
             </div>
 
-            {/* Title & Description */}
+            {/* Title */}
             <div>
               <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-white">
                 Good day, {admin?.Name || "Dr. Solanki"}
               </h1>
-              <p className="mt-1 text-xs text-slate-400 max-w-xl leading-relaxed">
-                Central administrative panel for hospital operations, department
-                specialties, verified medical doctors, and live patient consultation queues.
-              </p>
             </div>
 
             {/* Quick Metrics Bar */}

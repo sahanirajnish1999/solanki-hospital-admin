@@ -278,24 +278,9 @@ export default function SpecializationManager() {
     <div className="space-y-6">
       {/* Top Header */}
       <div className="flex flex-col gap-3.5 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-900 text-teal-400 shadow-2xs">
-            <Activity className="h-4 w-4" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h2 className="text-base font-semibold text-slate-900 tracking-tight">
-                Clinical Specializations
-              </h2>
-              <span className="rounded-md bg-slate-100 px-1.5 py-0.5 text-[10px] font-medium text-slate-600 border border-slate-200/60">
-                {specializations.length} Total
-              </span>
-            </div>
-            <p className="text-xs text-slate-400">
-              Define medical specialties assigned to doctors across Solanki Hospital
-            </p>
-          </div>
-        </div>
+        <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100 tracking-tight">
+          Specializations
+        </h2>
 
         <div className="flex items-center gap-2">
           {/* View mode toggle */}
