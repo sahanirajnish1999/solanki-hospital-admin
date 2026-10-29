@@ -1,33 +1,24 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
-import Dropdown, { DropdownOption } from "@/components/common/Dropdown";
-import {
-  useLoginMutation,
-  useSignupMutation,
-  useLazyGetProfileQuery,
-} from "@/redux/api/adminApi";
+import React, { useState } from "react";
+import { useLoginMutation, useLazyGetProfileQuery } from "@/redux/api/adminApi";
 import { useAppDispatch } from "@/redux/hooks";
 import { setCredentials } from "@/redux/features/authSlice";
 import { getErrorMessage } from "@/redux";
-import type { AdminRole } from "@/redux/types/admin.types";
 import {
   Lock,
   Mail,
-  User,
-  Phone,
-  Shield,
-  Upload,
   AlertCircle,
-  CheckCircle2,
   Eye,
   EyeOff,
   Hospital,
+  ArrowRight,
+  ShieldCheck,
+  Loader2,
 } from "lucide-react";
 
 export default function AuthForms() {
   const dispatch = useAppDispatch();
-  const [tab, setTab] = useState<"login" | "signup">("login");
   const [showPassword, setShowPassword] = useState(false);
 
   // Login form state
@@ -35,54 +26,9 @@ export default function AuthForms() {
   const [loginPassword, setLoginPassword] = useState("");
   const [loginError, setLoginError] = useState<string | null>(null);
 
-  // Signup form state
-  const [signupName, setSignupName] = useState("");
-  const [signupEmail, setSignupEmail] = useState("");
-  const [signupPassword, setSignupPassword] = useState("");
-  const [signupPhone, setSignupPhone] = useState("");
-  const [signupRole, setSignupRole] = useState<AdminRole>("admin");
-
-  const roleOptions: DropdownOption[] = useMemo(
-    () => [
-      {
-        value: "admin",
-        label: "Admin",
-        badge: "Staff",
-        badgeColor: "bg-blue-50 text-blue-700",
-      },
-      {
-        value: "superadmin",
-        label: "Superadmin",
-        badge: "Full Access",
-        badgeColor: "bg-purple-50 text-purple-700",
-      },
-    ],
-    []
-  );
-  const [signupImageBase64, setSignupImageBase64] = useState<string>("");
-  const [signupError, setSignupError] = useState<string | null>(null);
-  const [signupSuccess, setSignupSuccess] = useState<string | null>(null);
-
   // RTK Query Hooks
   const [loginApi, { isLoading: isLoggingIn }] = useLoginMutation();
-  const [signupApi, { isLoading: isSigningUp }] = useSignupMutation();
   const [fetchProfile] = useLazyGetProfileQuery();
-
-  // Handle Image Upload for Signup
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        setSignupError("Profile image must be less than 5MB");
-        return;
-      }
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setSignupImageBase64(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
 
   // Handle Login Submit
   const handleLoginSubmit = async (e: React.FormEvent) => {
@@ -90,7 +36,7 @@ export default function AuthForms() {
     setLoginError(null);
 
     if (!loginEmail.trim() || !loginPassword) {
-      setLoginError("Please enter both email and password.");
+      setLoginError("Please enter both work email and password.");
       return;
     }
 
@@ -113,328 +59,127 @@ export default function AuthForms() {
       }
     } catch (err: unknown) {
       setLoginError(
-        getErrorMessage(err, "Login failed. Please verify your credentials."),
+        getErrorMessage(
+          err,
+          "Invalid email or password. Please verify your credentials.",
+        ),
       );
-    }
-  };
-
-  // Handle Signup Submit
-  const handleSignupSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSignupError(null);
-    setSignupSuccess(null);
-
-    if (!signupName.trim() || !signupEmail.trim() || !signupPassword) {
-      setSignupError("Name, Email, and Password are required fields.");
-      return;
-    }
-
-    if (signupPassword.length < 6) {
-      setSignupError("Password must be at least 6 characters long.");
-      return;
-    }
-
-    try {
-      const response = await signupApi({
-        Name: signupName.trim(),
-        Email: signupEmail.trim(),
-        Password: signupPassword,
-        Phone: signupPhone.trim() || undefined,
-        Role: signupRole,
-        ProfileImage: signupImageBase64 || undefined,
-      }).unwrap();
-
-      setSignupSuccess(
-        response.Message || "Admin account registered successfully!",
-      );
-
-      if (response.Data?.Token) {
-        dispatch(
-          setCredentials({
-            token: response.Data.Token,
-            admin: response.Data.Admin,
-          }),
-        );
-      } else {
-        setTimeout(() => {
-          setTab("login");
-          setLoginEmail(signupEmail.trim());
-        }, 1500);
-      }
-    } catch (err: unknown) {
-      setSignupError(getErrorMessage(err, "Signup failed. Please try again."));
     }
   };
 
   return (
-    <div className="w-full max-w-lg mx-auto">
-      {/* Pure White Container Card */}
-      <div className="rounded-2xl border border-slate-200 bg-white p-7 shadow-xl shadow-slate-200/50 sm:p-9">
+    <div className="w-full max-w-md mx-auto">
+      {/* Login Card */}
+      <div className="rounded-2xl border border-slate-200 bg-white p-7 shadow-xl shadow-slate-200/50 sm:p-9 dark:border-slate-800 dark:bg-[#121215]">
         {/* Brand Header */}
         <div className="mb-6 text-center">
-          <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-tr from-blue-600 to-cyan-500 text-white shadow-lg shadow-blue-500/25">
+          <div className="mx-auto mb-3.5 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-lg shadow-blue-600/25">
             <Hospital className="h-7 w-7" />
           </div>
-          <h2 className="text-2xl font-bold tracking-tight text-slate-900">
+          <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
             Solanki Hospital Admin
           </h2>
-          <p className="mt-1 text-sm text-slate-500">
-            Secure access to hospital administration & medical operations
+          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+            Secure access to hospital administration &amp; medical operations
           </p>
         </div>
 
-        {/* Tab Switcher */}
-        <div className="mb-6 grid grid-cols-2 rounded-xl bg-slate-100 p-1 border border-slate-200/60">
-          <button
-            type="button"
-            onClick={() => setTab("login")}
-            className={`rounded-lg py-2.5 text-sm font-semibold transition ${
-              tab === "login"
-                ? "bg-white text-blue-700 shadow-sm border border-slate-200/60"
-                : "text-slate-600 hover:text-slate-900"
-            }`}
-          >
-            Admin Login
-          </button>
-          <button
-            type="button"
-            onClick={() => setTab("signup")}
-            className={`rounded-lg py-2.5 text-sm font-semibold transition ${
-              tab === "signup"
-                ? "bg-white text-blue-700 shadow-sm border border-slate-200/60"
-                : "text-slate-600 hover:text-slate-900"
-            }`}
-          >
-            Register Admin
-          </button>
-        </div>
-
-        {/* Tab 1: Login Form */}
-        {tab === "login" && (
-          <form onSubmit={handleLoginSubmit} className="space-y-4">
-            {loginError && (
-              <div className="flex items-start gap-2.5 rounded-xl border border-red-200 bg-red-50 p-3.5 text-sm text-red-700">
-                <AlertCircle className="h-5 w-5 shrink-0 text-red-600 mt-0.5" />
-                <span>{loginError}</span>
-              </div>
-            )}
-
-            <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
-                Admin Email
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-3.5 top-3.5 h-4 w-4 text-slate-400" />
-                <input
-                  type="email"
-                  value={loginEmail}
-                  onChange={(e) => setLoginEmail(e.target.value)}
-                  placeholder="Email"
-                  required
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50/70 py-2.5 pl-10 pr-4 text-sm text-slate-900 outline-none transition focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-100"
-                />
-              </div>
+        {/* Login Form */}
+        <form onSubmit={handleLoginSubmit} className="space-y-4">
+          {/* Error Alert */}
+          {loginError && (
+            <div className="flex items-start gap-2.5 rounded-xl border border-rose-200 bg-rose-50 p-3 text-xs text-rose-700 dark:border-rose-900/50 dark:bg-rose-950/40 dark:text-rose-300">
+              <AlertCircle className="h-4 w-4 shrink-0 text-rose-600 dark:text-rose-400 mt-0.5" />
+              <span className="font-medium leading-relaxed">{loginError}</span>
             </div>
+          )}
 
-            <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
-                Password
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-3.5 top-3.5 h-4 w-4 text-slate-400" />
-                <input
-                  type={showPassword ? "text" : "password"}
-                  value={loginPassword}
-                  onChange={(e) => setLoginPassword(e.target.value)}
-                  placeholder="Password"
-                  required
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50/70 py-2.5 pl-10 pr-10 text-sm text-slate-900 outline-none transition focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-100"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-3 text-slate-400 hover:text-slate-600"
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4" />
-                  ) : (
-                    <Eye className="h-4 w-4" />
-                  )}
-                </button>
-              </div>
+          {/* Email Field */}
+          <div>
+            <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+              Admin Email
+            </label>
+            <div className="relative">
+              <Mail className="absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
+              <input
+                type="email"
+                value={loginEmail}
+                onChange={(e) => setLoginEmail(e.target.value)}
+                placeholder="name@solankihospital.com"
+                required
+                autoComplete="email"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50/70 py-2.5 pl-10 pr-4 text-xs font-medium text-slate-900 placeholder:text-slate-400 outline-none transition focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-100 dark:border-slate-800 dark:bg-[#161619] dark:text-slate-100 dark:placeholder:text-slate-500"
+              />
             </div>
+          </div>
 
-            <button
-              type="submit"
-              disabled={isLoggingIn}
-              className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 py-3 text-sm font-semibold text-white shadow-md shadow-blue-500/25 transition hover:bg-blue-700 active:scale-[0.99] disabled:opacity-50"
-            >
-              {isLoggingIn ? (
-                <>
-                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                  <span>Authenticating Admin...</span>
-                </>
-              ) : (
-                <span>Sign In to Dashboard</span>
-              )}
-            </button>
-          </form>
-        )}
-
-        {/* Tab 2: Signup Form */}
-        {tab === "signup" && (
-          <form onSubmit={handleSignupSubmit} className="space-y-4">
-            {signupError && (
-              <div className="flex items-start gap-2.5 rounded-xl border border-red-200 bg-red-50 p-3.5 text-sm text-red-700">
-                <AlertCircle className="h-5 w-5 shrink-0 text-red-600 mt-0.5" />
-                <span>{signupError}</span>
-              </div>
-            )}
-
-            {signupSuccess && (
-              <div className="flex items-start gap-2.5 rounded-xl border border-emerald-200 bg-emerald-50 p-3.5 text-sm text-emerald-700">
-                <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600 mt-0.5" />
-                <span>{signupSuccess}</span>
-              </div>
-            )}
-
-            <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
-                Full Name *
-              </label>
-              <div className="relative">
-                <User className="absolute left-3.5 top-3.5 h-4 w-4 text-slate-400" />
-                <input
-                  type="text"
-                  value={signupName}
-                  onChange={(e) => setSignupName(e.target.value)}
-                  placeholder="Name"
-                  required
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50/70 py-2.5 pl-10 pr-4 text-sm text-slate-900 outline-none transition focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-100"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
-                Email Address *
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-3.5 top-3.5 h-4 w-4 text-slate-400" />
-                <input
-                  type="email"
-                  value={signupEmail}
-                  onChange={(e) => setSignupEmail(e.target.value)}
-                  placeholder="Email"
-                  required
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50/70 py-2.5 pl-10 pr-4 text-sm text-slate-900 outline-none transition focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-100"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
-                  Password (min 6) *
-                </label>
-                <div className="relative">
-                  <Lock className="absolute left-3.5 top-3.5 h-4 w-4 text-slate-400" />
-                  <input
-                    type="password"
-                    value={signupPassword}
-                    onChange={(e) => setSignupPassword(e.target.value)}
-                    placeholder="Password"
-                    required
-                    minLength={6}
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50/70 py-2.5 pl-10 pr-4 text-sm text-slate-900 outline-none transition focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-100"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
-                  Phone (Optional)
-                </label>
-                <div className="relative">
-                  <Phone className="absolute left-3.5 top-3.5 h-4 w-4 text-slate-400" />
-                  <input
-                    type="tel"
-                    value={signupPhone}
-                    onChange={(e) => setSignupPhone(e.target.value)}
-                    placeholder="Phone Number"
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50/70 py-2.5 pl-10 pr-4 text-sm text-slate-900 outline-none transition focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-100"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div>
-                <Dropdown
-                  label="Assigned Role"
-                  labelClassName="text-xs uppercase tracking-wider text-slate-700 mb-1.5"
-                  leadingIcon={<Shield className="h-4 w-4" />}
-                  options={roleOptions}
-                  value={signupRole}
-                  onChange={(val) => setSignupRole(val as AdminRole)}
-                  showBadgeInTrigger
-                />
-                <p className="mt-1 text-[11px] text-slate-400">
-                  First admin registered is auto-promoted to superadmin.
-                </p>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
-                  Profile Photo (Optional)
-                </label>
-                <label className="flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-slate-300 bg-slate-50 py-2.5 px-3 text-xs font-medium text-slate-600 transition hover:border-blue-500 hover:bg-blue-50/30">
-                  <Upload className="h-4 w-4 text-slate-400" />
-                  <span className="truncate">
-                    {signupImageBase64 ? "Photo selected" : "Choose image"}
-                  </span>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageChange}
-                    className="hidden"
-                  />
-                </label>
-                {signupImageBase64 && (
-                  <div className="mt-1.5 flex items-center gap-2">
-                    <img
-                      src={signupImageBase64}
-                      alt="Preview"
-                      className="h-6 w-6 rounded-full object-cover ring-1 ring-blue-500"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setSignupImageBase64("")}
-                      className="text-[11px] text-red-500 hover:underline"
-                    >
-                      Remove
-                    </button>
-                  </div>
+          {/* Password Field */}
+          <div>
+            <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+              Password
+            </label>
+            <div className="relative">
+              <Lock className="absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
+              <input
+                type={showPassword ? "text" : "password"}
+                value={loginPassword}
+                onChange={(e) => setLoginPassword(e.target.value)}
+                placeholder="Enter password"
+                required
+                autoComplete="current-password"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50/70 py-2.5 pl-10 pr-10 text-xs font-medium text-slate-900 placeholder:text-slate-400 outline-none transition focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-100 dark:border-slate-800 dark:bg-[#161619] dark:text-slate-100 dark:placeholder:text-slate-500"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                tabIndex={-1}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
+              >
+                {showPassword ? (
+                  <EyeOff className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
                 )}
-              </div>
+              </button>
             </div>
+          </div>
 
-            <button
-              type="submit"
-              disabled={isSigningUp}
-              className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 py-3 text-sm font-semibold text-white shadow-md shadow-blue-500/25 transition hover:bg-blue-700 active:scale-[0.99] disabled:opacity-50"
-            >
-              {isSigningUp ? (
-                <>
-                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                  <span>Creating Account...</span>
-                </>
-              ) : (
-                <span>Register Admin Account</span>
-              )}
-            </button>
-          </form>
-        )}
+          {/* Provisioning Notice */}
+          <div className="flex items-center gap-2 rounded-xl bg-slate-100 p-2.5 text-[11px] text-slate-600 dark:bg-[#18181b] dark:text-slate-400 border border-slate-200/60 dark:border-slate-800">
+            <ShieldCheck className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400 shrink-0" />
+            <span>
+              Administrator accounts are provisioned centrally by Superadmin.
+            </span>
+          </div>
+
+          {/* Submit Action */}
+          <button
+            type="submit"
+            disabled={isLoggingIn}
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 py-3 text-xs font-bold text-white shadow-md shadow-blue-600/25 transition active:scale-[0.99] disabled:opacity-50 cursor-pointer"
+          >
+            {isLoggingIn ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span>Authenticating Admin...</span>
+              </>
+            ) : (
+              <>
+                <span>Sign In to Dashboard</span>
+                <ArrowRight className="h-4 w-4" />
+              </>
+            )}
+          </button>
+        </form>
+
+        {/* Security Footer Notice */}
+        <div className="mt-6 border-t border-slate-100 pt-3 text-center dark:border-slate-800">
+          <p className="text-[11px] text-slate-400 dark:text-slate-500 flex items-center justify-center gap-1.5">
+            <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" />
+            <span>256-bit SSL encrypted • Clinical Audit Trail Enabled</span>
+          </p>
+        </div>
       </div>
     </div>
   );

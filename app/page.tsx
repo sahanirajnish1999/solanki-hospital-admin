@@ -57,48 +57,47 @@ export default function Home() {
 
   // 2. Main Application Flow
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans transition-colors duration-200">
+    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans transition-colors duration-200 dark:bg-[#09090c] dark:text-slate-100">
       {!isAuthenticated ? (
         /* Unauthenticated Auth Screen */
-        <div className="relative flex min-h-screen flex-col items-center justify-center p-6 bg-slate-50">
-          {/* Top-right theme switcher */}
-          <div className="absolute top-6 right-6 z-20">
+        <div className="relative flex min-h-screen flex-col items-center justify-center p-6 bg-slate-50 dark:bg-[#09090b]">
+          {/* Top Bar with Brand Badge & Theme Switcher */}
+          <div className="absolute top-6 inset-x-6 flex items-center justify-between z-20 max-w-5xl mx-auto">
+            <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-semibold text-slate-700 shadow-xs dark:border-slate-800 dark:bg-[#121215] dark:text-slate-300">
+              <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span>Solanki Hospital Console</span>
+              <span className="text-slate-300 dark:text-slate-700">•</span>
+              <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
+                Staff Access
+              </span>
+            </div>
+
             <ThemeToggle showLabel={true} />
           </div>
-          <div className="mb-6 text-center max-w-md">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-100 px-3 py-1 text-xs font-bold text-blue-700 mb-3">
-              <ShieldCheck className="h-3.5 w-3.5" />
-              Solanki Hospital Medical Console
-            </span>
-            <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">
-              Admin &amp; Medical Portal
-            </h1>
-            <p className="mt-1.5 text-xs text-slate-500">
-              Manage clinical specialties, doctors, staff permissions, and hospital operations.
-            </p>
-          </div>
 
-          <AuthForms />
+          <div className="relative z-10 w-full flex flex-col items-center pt-12 sm:pt-4">
+            <AuthForms />
 
-          {/* Quick API status badges */}
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-2 text-[11px] text-slate-500">
-            <span className="flex items-center gap-1 rounded-md bg-white px-2.5 py-1 border border-slate-200 shadow-2xs">
-              <Zap className="h-3 w-3 text-amber-500" />
-              Admin APIs Active
-            </span>
-            <span className="flex items-center gap-1 rounded-md bg-white px-2.5 py-1 border border-slate-200 shadow-2xs">
-              <Hospital className="h-3 w-3 text-blue-500" />
-              Doctor &amp; Specialization APIs Ready
-            </span>
-            <span className="flex items-center gap-1 rounded-md bg-white px-2.5 py-1 border border-slate-200 shadow-2xs">
-              <Lock className="h-3 w-3 text-emerald-500" />
-              JWT Authenticated
-            </span>
+            {/* Quick Security & Compliance Badges */}
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-2.5 text-[11px] text-slate-500 dark:text-slate-400">
+              <span className="flex items-center gap-1.5 rounded-xl bg-white px-3 py-1.5 border border-slate-200 shadow-2xs dark:border-slate-800 dark:bg-[#121215] dark:text-slate-300">
+                <Zap className="h-3.5 w-3.5 text-amber-500" />
+                <span>Admin APIs Active</span>
+              </span>
+              <span className="flex items-center gap-1.5 rounded-xl bg-white px-3 py-1.5 border border-slate-200 shadow-2xs dark:border-slate-800 dark:bg-[#121215] dark:text-slate-300">
+                <Hospital className="h-3.5 w-3.5 text-blue-500" />
+                <span>Clinical &amp; Specialist Portal</span>
+              </span>
+              <span className="flex items-center gap-1.5 rounded-xl bg-white px-3 py-1.5 border border-slate-200 shadow-2xs dark:border-slate-800 dark:bg-[#121215] dark:text-slate-300">
+                <Lock className="h-3.5 w-3.5 text-emerald-500" />
+                <span>JWT Authenticated</span>
+              </span>
+            </div>
           </div>
         </div>
       ) : (
         /* Authenticated Full Enterprise Admin Panel */
-        <div className="flex h-screen overflow-hidden bg-slate-50">
+        <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-[#0b0c10]">
           {/* Left Sidebar */}
           <AdminSidebar
             activeView={activeView}

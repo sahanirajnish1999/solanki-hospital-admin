@@ -98,6 +98,16 @@ export interface UpdateAdminPermissionsRequest {
   Permissions: string[];
 }
 
+// 9. Create Admin (Superadmin only via POST /v1/api/admin/create)
+export interface CreateAdminRequest {
+  Name: string;
+  Email: string;
+  Password: string;
+  Phone?: string;
+  Permissions?: string[];
+  ProfileImage?: string;
+}
+
 // Auth State in Redux
 export interface AuthState {
   token: string | null;

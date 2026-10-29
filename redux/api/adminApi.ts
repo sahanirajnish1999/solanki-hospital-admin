@@ -13,6 +13,7 @@ import type {
   GetAllAdminsResponse,
   UpdateAdminStatusRequest,
   UpdateAdminPermissionsRequest,
+  CreateAdminRequest,
 } from "../types/admin.types";
 import { API_BASE_URL } from "../utils/imageHelper";
 
@@ -141,6 +142,18 @@ export const adminApi = createApi({
         "AdminProfile",
       ],
     }),
+
+    // 10. Create Admin (Superadmin only via POST /create)
+    createAdmin: builder.mutation<ApiResponse<IAdmin>, CreateAdminRequest>({
+      query: (adminData) => ({
+        url: "/create",
+        method: "POST",
+        body: adminData,
+      }),
+      invalidatesTags: [
+        { type: "AdminList", id: "LIST" },
+      ],
+    }),
   }),
 });
 
@@ -155,4 +168,5 @@ export const {
   useGetAllAdminsQuery,
   useUpdateAdminStatusMutation,
   useUpdateAdminPermissionsMutation,
+  useCreateAdminMutation,
 } = adminApi;

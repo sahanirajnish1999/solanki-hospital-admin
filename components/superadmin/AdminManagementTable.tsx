@@ -14,6 +14,7 @@ import {
   isSuperAdmin,
 } from "@/redux/utils/permissions";
 import ManagePermissionsModal from "./ManagePermissionsModal";
+import CreateAdminModal from "./CreateAdminModal";
 import {
   Users,
   Search,
@@ -26,6 +27,7 @@ import {
   SlidersHorizontal,
   Crown,
   Shield,
+  UserPlus,
 } from "lucide-react";
 
 export default function AdminManagementTable() {
@@ -38,6 +40,7 @@ export default function AdminManagementTable() {
     text: string;
   } | null>(null);
   const [managingAdmin, setManagingAdmin] = useState<IAdmin | null>(null);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   const {
     data: adminsResponse,
@@ -127,7 +130,7 @@ export default function AdminManagementTable() {
           <button
             onClick={() => refetch()}
             disabled={isFetching}
-            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-700 shadow-xs transition hover:bg-slate-50 active:scale-95 disabled:opacity-50 dark:border-slate-800 dark:bg-[#161619] dark:text-slate-300 dark:hover:bg-[#1a1a1f]"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-700 shadow-xs transition hover:bg-slate-50 active:scale-95 disabled:opacity-50 dark:border-slate-800 dark:bg-[#161619] dark:text-slate-300 dark:hover:bg-[#1a1a1f] cursor-pointer"
             title="Reload administrator list"
           >
             <RotateCw
@@ -136,6 +139,15 @@ export default function AdminManagementTable() {
             <span className="hidden sm:inline">
               {isFetching ? "Syncing..." : "Refresh"}
             </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setIsCreateModalOpen(true)}
+            className="inline-flex items-center gap-1.5 rounded-xl bg-purple-600 hover:bg-purple-700 px-3.5 py-2 text-xs font-bold text-white shadow-2xs transition active:scale-95 cursor-pointer dark:bg-purple-600 dark:hover:bg-purple-500 shrink-0"
+          >
+            <UserPlus className="h-3.5 w-3.5" />
+            <span>Create Admin</span>
           </button>
         </div>
       </div>
@@ -393,6 +405,15 @@ export default function AdminManagementTable() {
         isOpen={Boolean(managingAdmin)}
         admin={managingAdmin}
         onClose={() => setManagingAdmin(null)}
+        onSuccess={(msg) => {
+          setActionMessage({ type: "success", text: msg });
+        }}
+      />
+
+      {/* Superadmin Create Admin Modal */}
+      <CreateAdminModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
         onSuccess={(msg) => {
           setActionMessage({ type: "success", text: msg });
         }}

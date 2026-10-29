@@ -36,10 +36,14 @@ export default function RootLayout({
               (function() {
                 try {
                   var saved = localStorage.getItem('theme');
-                  if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                  // Default is strictly White Theme (light). Only enable dark if explicitly saved as 'dark'.
+                  if (saved === 'dark') {
                     document.documentElement.classList.add('dark');
                   } else {
                     document.documentElement.classList.remove('dark');
+                    if (!saved) {
+                      localStorage.setItem('theme', 'light');
+                    }
                   }
                 } catch (e) {}
               })();
