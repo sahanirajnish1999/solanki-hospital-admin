@@ -69,11 +69,11 @@ export default function AuthForms() {
 
   return (
     <div className="w-full max-w-md mx-auto">
-      {/* Login Card */}
-      <div className="rounded-2xl border border-slate-200 bg-white p-7 shadow-xl shadow-slate-200/50 sm:p-9 dark:border-slate-800 dark:bg-[#121215]">
+      {/* Login Card with Spacious Vertical Flow */}
+      <div className="min-h-[580px] sm:min-h-[620px] flex flex-col justify-between rounded-3xl border border-slate-200 bg-white p-8 py-12 sm:py-14 shadow-xl shadow-slate-200/50 dark:border-slate-800 dark:bg-[#121215]">
         {/* Brand Header */}
-        <div className="mb-6 text-center">
-          <div className="mx-auto mb-3.5 flex h-16 w-16 items-center justify-center rounded-2xl bg-white p-2 shadow-md shadow-slate-200/50 border border-slate-200/80 dark:bg-[#161619] dark:border-slate-800">
+        <div className="text-center pt-2">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-white p-2 shadow-md shadow-slate-200/50 border border-slate-200/80 dark:bg-[#161619] dark:border-slate-800">
             <img
               src="/bbc-logo.png"
               alt="Solanki Hospital Logo"
@@ -88,8 +88,8 @@ export default function AuthForms() {
           </p>
         </div>
 
-        {/* Login Form */}
-        <form onSubmit={handleLoginSubmit} className="space-y-4">
+        {/* Login Form with Extra Vertical Spacing */}
+        <form onSubmit={handleLoginSubmit} className="space-y-6 my-auto py-6">
           {/* Error Alert */}
           {loginError && (
             <div className="flex items-start gap-2.5 rounded-xl border border-rose-200 bg-rose-50 p-3 text-xs text-rose-700 dark:border-rose-900/50 dark:bg-rose-950/40 dark:text-rose-300">
@@ -162,12 +162,15 @@ export default function AuthForms() {
               </>
             ) : (
               <>
-                <span>Sign In to Dashboard</span>
+                <span>Sign In</span>
                 <ArrowRight className="h-4 w-4" />
               </>
             )}
           </button>
         </form>
+
+        {/* Empty bottom anchor for flex balancing */}
+        <div className="h-2" />
       </div>
     </div>
   );
