@@ -15,7 +15,7 @@ import ThemeToggle from "@/components/theme/ThemeToggle";
 import AppLoader from "@/components/common/AppLoader";
 import { useAppSelector } from "@/redux/hooks";
 import { hasPermission } from "@/redux/utils/permissions";
-import { ShieldCheck, Hospital, Zap, Lock } from "lucide-react";
+import { ShieldCheck, Lock } from "lucide-react";
 
 export default function Home() {
   const { isAuthenticated, isSuperAdmin, isInitialized, admin } = useAppSelector(
@@ -79,24 +79,8 @@ export default function Home() {
             <ThemeToggle showLabel={true} />
           </div>
 
-          <div className="relative z-10 w-full flex flex-col items-center pt-12 sm:pt-4">
+          <div className="relative z-10 w-full flex flex-col items-center pt-24 sm:pt-20 pb-16">
             <AuthForms />
-
-            {/* Quick Security & Compliance Badges */}
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-2.5 text-[11px] text-slate-500 dark:text-slate-400">
-              <span className="flex items-center gap-1.5 rounded-xl bg-white px-3 py-1.5 border border-slate-200 shadow-2xs dark:border-slate-800 dark:bg-[#121215] dark:text-slate-300">
-                <Zap className="h-3.5 w-3.5 text-amber-500" />
-                <span>Admin APIs Active</span>
-              </span>
-              <span className="flex items-center gap-1.5 rounded-xl bg-white px-3 py-1.5 border border-slate-200 shadow-2xs dark:border-slate-800 dark:bg-[#121215] dark:text-slate-300">
-                <Hospital className="h-3.5 w-3.5 text-blue-500" />
-                <span>Clinical &amp; Specialist Portal</span>
-              </span>
-              <span className="flex items-center gap-1.5 rounded-xl bg-white px-3 py-1.5 border border-slate-200 shadow-2xs dark:border-slate-800 dark:bg-[#121215] dark:text-slate-300">
-                <Lock className="h-3.5 w-3.5 text-emerald-500" />
-                <span>JWT Authenticated</span>
-              </span>
-            </div>
           </div>
         </div>
       ) : (

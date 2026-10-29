@@ -69,10 +69,10 @@ export default function AuthForms() {
 
   return (
     <div className="w-full max-w-md mx-auto">
-      {/* Login Card with Spacious Vertical Flow */}
-      <div className="min-h-[580px] sm:min-h-[620px] flex flex-col justify-between rounded-3xl border border-slate-200 bg-white p-8 py-12 sm:py-14 shadow-xl shadow-slate-200/50 dark:border-slate-800 dark:bg-[#121215]">
+      {/* Login Card with Generous Top & Bottom Spacing */}
+      <div className="rounded-2xl border border-slate-200 bg-white px-8 sm:px-10 pt-12 pb-14 sm:pt-14 sm:pb-16 shadow-xl shadow-slate-200/50 dark:border-slate-800 dark:bg-[#121215]">
         {/* Brand Header */}
-        <div className="text-center pt-2">
+        <div className="mb-9 text-center">
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-white p-2 shadow-md shadow-slate-200/50 border border-slate-200/80 dark:bg-[#161619] dark:border-slate-800">
             <img
               src="/bbc-logo.png"
@@ -83,16 +83,16 @@ export default function AuthForms() {
           <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
             Solanki Hospital Admin
           </h2>
-          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+          <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
             Secure access to hospital administration &amp; medical operations
           </p>
         </div>
 
-        {/* Login Form with Extra Vertical Spacing */}
-        <form onSubmit={handleLoginSubmit} className="space-y-6 my-auto py-6">
+        {/* Login Form */}
+        <form onSubmit={handleLoginSubmit} className="space-y-6">
           {/* Error Alert */}
           {loginError && (
-            <div className="flex items-start gap-2.5 rounded-xl border border-rose-200 bg-rose-50 p-3 text-xs text-rose-700 dark:border-rose-900/50 dark:bg-rose-950/40 dark:text-rose-300">
+            <div className="flex items-start gap-2.5 rounded-xl border border-rose-200 bg-rose-50 p-3.5 text-xs text-rose-700 dark:border-rose-900/50 dark:bg-rose-950/40 dark:text-rose-300">
               <AlertCircle className="h-4 w-4 shrink-0 text-rose-600 dark:text-rose-400 mt-0.5" />
               <span className="font-medium leading-relaxed">{loginError}</span>
             </div>
@@ -100,7 +100,7 @@ export default function AuthForms() {
 
           {/* Email Field */}
           <div>
-            <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+            <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-2">
               Admin Email
             </label>
             <div className="relative">
@@ -119,7 +119,7 @@ export default function AuthForms() {
 
           {/* Password Field */}
           <div>
-            <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+            <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-2">
               Password
             </label>
             <div className="relative">
@@ -150,27 +150,26 @@ export default function AuthForms() {
           </div>
 
           {/* Submit Action */}
-          <button
-            type="submit"
-            disabled={isLoggingIn}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 py-3 text-xs font-bold text-white shadow-md shadow-blue-600/25 transition active:scale-[0.99] disabled:opacity-50 cursor-pointer"
-          >
-            {isLoggingIn ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                <span>Authenticating Admin...</span>
-              </>
-            ) : (
-              <>
-                <span>Sign In</span>
-                <ArrowRight className="h-4 w-4" />
-              </>
-            )}
-          </button>
+          <div className="pt-4 sm:pt-5">
+            <button
+              type="submit"
+              disabled={isLoggingIn}
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 py-3 text-xs font-bold text-white shadow-md shadow-blue-600/25 transition active:scale-[0.99] disabled:opacity-50 cursor-pointer"
+            >
+              {isLoggingIn ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <span>Authenticating Admin...</span>
+                </>
+              ) : (
+                <>
+                  <span>Sign In</span>
+                  <ArrowRight className="h-4 w-4" />
+                </>
+              )}
+            </button>
+          </div>
         </form>
-
-        {/* Empty bottom anchor for flex balancing */}
-        <div className="h-2" />
       </div>
     </div>
   );
