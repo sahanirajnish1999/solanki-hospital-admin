@@ -107,23 +107,12 @@ export default function AdminSidebar({
     <aside className="w-60 shrink-0 border-r border-slate-200/90 bg-white flex flex-col justify-between h-screen sticky top-0 z-20 overflow-y-auto select-none">
       <div className="flex flex-col flex-1 min-h-0">
         {/* 1. Refined Hospital Brand Header */}
-        <div className="flex items-center gap-2.5 px-4 py-3.5 border-b border-slate-100 shrink-0">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-900 text-white shadow-2xs shrink-0">
-            <Hospital className="h-4.5 w-4.5 text-teal-400" />
-          </div>
-          <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-1.5">
-              <span className="text-xs font-bold text-slate-900 tracking-tight truncate">
-                Solanki Hospital
-              </span>
-              <span className="rounded bg-slate-100 px-1.5 py-0.2 text-[9px] font-semibold text-slate-600 border border-slate-200 uppercase">
-                Admin
-              </span>
-            </div>
-            <p className="text-[10px] text-slate-400 font-medium truncate">
-              Medical Care Console
-            </p>
-          </div>
+        <div className="flex items-center justify-center px-4 py-4 border-b border-slate-100 dark:border-slate-800 shrink-0">
+          <img
+            src="/bbc-logo.png"
+            alt="Solanki Hospital Logo"
+            className="h-12 w-auto max-w-[180px] object-contain transition-transform duration-200 hover:scale-105"
+          />
         </div>
 
         {/* 2. Navigation Menu */}

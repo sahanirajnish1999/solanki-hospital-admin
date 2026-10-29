@@ -73,8 +73,12 @@ export default function AuthForms() {
       <div className="rounded-2xl border border-slate-200 bg-white p-7 shadow-xl shadow-slate-200/50 sm:p-9 dark:border-slate-800 dark:bg-[#121215]">
         {/* Brand Header */}
         <div className="mb-6 text-center">
-          <div className="mx-auto mb-3.5 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-lg shadow-blue-600/25">
-            <Hospital className="h-7 w-7" />
+          <div className="mx-auto mb-3.5 flex h-16 w-16 items-center justify-center rounded-2xl bg-white p-2 shadow-md shadow-slate-200/50 border border-slate-200/80 dark:bg-[#161619] dark:border-slate-800">
+            <img
+              src="/bbc-logo.png"
+              alt="Solanki Hospital Logo"
+              className="h-full w-full object-contain"
+            />
           </div>
           <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
             Solanki Hospital Admin
@@ -105,7 +109,7 @@ export default function AuthForms() {
                 type="email"
                 value={loginEmail}
                 onChange={(e) => setLoginEmail(e.target.value)}
-                placeholder="name@solankihospital.com"
+                placeholder="Email"
                 required
                 autoComplete="email"
                 className="w-full rounded-xl border border-slate-200 bg-slate-50/70 py-2.5 pl-10 pr-4 text-xs font-medium text-slate-900 placeholder:text-slate-400 outline-none transition focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-100 dark:border-slate-800 dark:bg-[#161619] dark:text-slate-100 dark:placeholder:text-slate-500"
@@ -145,14 +149,6 @@ export default function AuthForms() {
             </div>
           </div>
 
-          {/* Provisioning Notice */}
-          <div className="flex items-center gap-2 rounded-xl bg-slate-100 p-2.5 text-[11px] text-slate-600 dark:bg-[#18181b] dark:text-slate-400 border border-slate-200/60 dark:border-slate-800">
-            <ShieldCheck className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400 shrink-0" />
-            <span>
-              Administrator accounts are provisioned centrally by Superadmin.
-            </span>
-          </div>
-
           {/* Submit Action */}
           <button
             type="submit"
@@ -172,14 +168,6 @@ export default function AuthForms() {
             )}
           </button>
         </form>
-
-        {/* Security Footer Notice */}
-        <div className="mt-6 border-t border-slate-100 pt-3 text-center dark:border-slate-800">
-          <p className="text-[11px] text-slate-400 dark:text-slate-500 flex items-center justify-center gap-1.5">
-            <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" />
-            <span>256-bit SSL encrypted • Clinical Audit Trail Enabled</span>
-          </p>
-        </div>
       </div>
     </div>
   );

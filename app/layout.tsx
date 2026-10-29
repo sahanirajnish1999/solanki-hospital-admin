@@ -16,6 +16,14 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Solanki Hospital - Admin Portal",
   description: "Management and Administration Portal for Solanki Hospital",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/bbc-logo.png", type: "image/png" },
+    ],
+    shortcut: "/favicon.ico",
+    apple: "/bbc-logo.png",
+  },
 };
 
 export default function RootLayout({
@@ -30,6 +38,10 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <head>
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" href="/bbc-logo.png" type="image/png" />
+        <link rel="shortcut icon" href="/favicon.ico" />
+        <link rel="apple-touch-icon" href="/bbc-logo.png" />
         <script
           dangerouslySetInnerHTML={{
             __html: `

@@ -63,8 +63,12 @@ export default function Home() {
         <div className="relative flex min-h-screen flex-col items-center justify-center p-6 bg-slate-50 dark:bg-[#09090b]">
           {/* Top Bar with Brand Badge & Theme Switcher */}
           <div className="absolute top-6 inset-x-6 flex items-center justify-between z-20 max-w-5xl mx-auto">
-            <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-semibold text-slate-700 shadow-xs dark:border-slate-800 dark:bg-[#121215] dark:text-slate-300">
-              <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+            <div className="inline-flex items-center gap-2.5 rounded-full border border-slate-200 bg-white pl-2 pr-3.5 py-1.5 text-xs font-semibold text-slate-700 shadow-xs dark:border-slate-800 dark:bg-[#121215] dark:text-slate-300">
+              <img
+                src="/bbc-logo.png"
+                alt="Solanki Hospital Logo"
+                className="h-5 w-5 object-contain"
+              />
               <span>Solanki Hospital Console</span>
               <span className="text-slate-300 dark:text-slate-700">•</span>
               <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
