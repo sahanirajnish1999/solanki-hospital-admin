@@ -99,7 +99,9 @@ export default function CreateDoctorModal({
         Phone: phone.trim(),
         Password: password,
         SpecializationId: specializationId,
-        ConsultationFee: Number(consultationFee) || 0,
+        ...(consultationFee !== ""
+          ? { ConsultationFee: Number(consultationFee) }
+          : {}),
         AvailableDays: availableDays.trim(),
         AvailableTime: availableTime.trim(),
       }).unwrap();

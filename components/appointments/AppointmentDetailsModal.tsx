@@ -387,7 +387,7 @@ export default function AppointmentDetailsModal({
 
                   <div className="flex items-baseline gap-1.5">
                     <span className="text-lg font-bold text-slate-900 dark:text-slate-100">
-                      ₹{appointment.ConsultationFee || 0}
+                      ₹{appointment.ConsultationFee ?? "—"}
                     </span>
                     <span className="text-[11px] text-slate-400 dark:text-slate-500">
                       / consultation

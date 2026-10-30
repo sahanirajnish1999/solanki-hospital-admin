@@ -175,8 +175,8 @@ export default function AppointmentTableView({
                     {/* 4. Fee & Payment */}
                     <td className="py-3.5 px-3 align-middle">
                       <div className="text-xs">
-                        <div className="font-bold text-slate-900">
-                          ₹{app.ConsultationFee || 0}
+                        <div className="font-bold text-slate-900 dark:text-slate-100">
+                          ₹{app.ConsultationFee ?? "—"}
                         </div>
                         <div className="mt-0.5">
                           <span

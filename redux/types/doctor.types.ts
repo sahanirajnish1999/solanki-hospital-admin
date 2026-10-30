@@ -1,5 +1,12 @@
 export type DoctorVerificationStatus = "pending" | "approved" | "rejected";
 
+export interface IConsultationFees {
+  Normal?: number;
+  Medium?: number;
+  Emergency?: number;
+  [key: string]: number | undefined;
+}
+
 export interface IDoctor {
   _id?: string;
   Id?: string;
@@ -12,10 +19,7 @@ export interface IDoctor {
   About?: string;
   ProfileImage?: string;
   ConsultationFee?: number;
-  ConsultationFees?: {
-    Normal?: number;
-    [key: string]: number | undefined;
-  };
+  ConsultationFees?: IConsultationFees;
   AvailableDays?: string;
   AvailableTime?: string;
   Rating?: number;
@@ -42,6 +46,11 @@ export interface CreateDoctorRequest {
   Password: string;
   SpecializationId: string;
   ConsultationFee?: number;
+  ConsultationFees?: {
+    Normal: number;
+    Medium: number;
+    Emergency: number;
+  };
   AvailableDays?: string;
   AvailableTime?: string;
 }
@@ -83,6 +92,11 @@ export interface VerifyDoctorRequest {
 
 export interface ManageDoctorRequest {
   id: string;
+  ConsultationFees?: {
+    Normal: number;
+    Medium?: number;
+    Emergency?: number;
+  };
   ConsultationFee?: number;
   AvailableDays?: string;
   AvailableTime?: string;

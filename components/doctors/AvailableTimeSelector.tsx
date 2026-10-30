@@ -177,7 +177,7 @@ export default function AvailableTimeSelector({
           type="text"
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          placeholder="e.g. 9:00 AM - 4:00 PM"
+          placeholder="Available Time"
           required={required}
           className="w-full rounded-xl border border-slate-200 bg-slate-50/70 py-2.5 pl-10 pr-8 text-xs text-slate-900 placeholder:text-slate-400 outline-none transition-all duration-150 focus:border-[#008ba3] focus:bg-white focus:ring-3 focus:ring-[#008ba3]/10"
         />

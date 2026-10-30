@@ -12,6 +12,8 @@ import {
   Check,
   X,
   ShieldCheck,
+  Calendar,
+  Clock,
 } from "lucide-react";
 import SpecializationIconBadge from "../specializations/SpecializationIconBadge";
 
@@ -34,7 +36,9 @@ export default function DoctorTableView({
   onManage,
   onViewProfile,
 }: DoctorTableViewProps) {
-  const [openStatusDropdownId, setOpenStatusDropdownId] = useState<string | null>(null);
+  const [openStatusDropdownId, setOpenStatusDropdownId] = useState<
+    string | null
+  >(null);
 
   // Close dropdown on click outside or escape key
   useEffect(() => {
@@ -62,7 +66,7 @@ export default function DoctorTableView({
         {/* Table Header */}
         <thead>
           <tr className="border-b border-slate-200 bg-slate-50/75 text-[11px] font-medium text-slate-500 select-none dark:border-slate-800 dark:bg-slate-900/80 dark:text-slate-400">
-            <th className="py-3 pl-5 pr-3 w-[36%] font-medium">
+            <th className="py-3 pl-5 pr-3 w-[34%] font-medium">
               <span>Doctor Details</span>
             </th>
             <th className="py-3 px-3 w-[22%] font-medium">
@@ -71,8 +75,8 @@ export default function DoctorTableView({
             <th className="py-3 px-3 text-center w-[14%] font-medium">
               <span>Status</span>
             </th>
-            <th className="py-3 px-3 w-[14%] font-medium">
-              <span>Fee & Schedule</span>
+            <th className="py-3 px-3 w-[16%] font-medium">
+              <span>Schedule</span>
             </th>
             <th className="py-3 pl-3 pr-5 text-right w-[14%] font-medium">
               <span>Actions</span>
@@ -104,7 +108,8 @@ export default function DoctorTableView({
                     No doctors found
                   </div>
                   <p className="text-[11px] text-slate-400 max-w-sm">
-                    Try adjusting your search criteria or register a new practitioner.
+                    Try adjusting your search criteria or register a new
+                    practitioner.
                   </p>
                 </div>
               </td>
@@ -113,7 +118,8 @@ export default function DoctorTableView({
             doctors.map((doc, index) => {
               const docId = doc._id || doc.Id || "";
               const vStatus =
-                doc.VerificationStatus || (doc.IsVerified ? "approved" : "pending");
+                doc.VerificationStatus ||
+                (doc.IsVerified ? "approved" : "pending");
               const isApproved = vStatus === "approved";
               const isPending = vStatus === "pending";
               const isRejected = vStatus === "rejected";
@@ -124,14 +130,20 @@ export default function DoctorTableView({
                 <tr
                   key={docId}
                   className={`group transition-colors duration-150 hover:bg-slate-50/70 dark:hover:bg-slate-800/40 ${
-                    openStatusDropdownId === docId ? "relative z-30 bg-slate-50/50 dark:bg-slate-800/50" : ""
+                    openStatusDropdownId === docId
+                      ? "relative z-30 bg-slate-50/50 dark:bg-slate-800/50"
+                      : ""
                   }`}
                 >
                   {/* 1. Doctor Details with Source Tag */}
                   <td className="py-3 pl-5 pr-3 align-middle">
                     <div className="flex items-center gap-3">
                       {/* Avatar */}
-                      <div className="relative shrink-0">
+                      <div
+                        onClick={() => onViewProfile(doc)}
+                        className="relative shrink-0 cursor-pointer"
+                        title="Click to view full doctor details"
+                      >
                         {doc.ProfileImage ? (
                           <img
                             src={getAdminImageUrl(doc.ProfileImage)}
@@ -145,7 +157,9 @@ export default function DoctorTableView({
                         )}
                         <span
                           className={`absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-white dark:border-slate-900 ${
-                            doc.IsOnline ? "bg-emerald-500" : "bg-slate-300 dark:bg-slate-600"
+                            doc.IsOnline
+                              ? "bg-emerald-500"
+                              : "bg-slate-300 dark:bg-slate-600"
                           }`}
                           title={doc.IsOnline ? "Online Now" : "Offline"}
                         />
@@ -162,7 +176,10 @@ export default function DoctorTableView({
                             {doc.Name}
                           </span>
                           {isApproved && (
-                            <span title="Verified Doctor" className="inline-flex">
+                            <span
+                              title="Verified Doctor"
+                              className="inline-flex"
+                            >
                               <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
                             </span>
                           )}
@@ -179,15 +196,11 @@ export default function DoctorTableView({
                           )}
                         </div>
 
-                        {/* Email & Phone */}
-                        <div className="mt-0.5 flex items-center gap-2 text-[11px] text-slate-400 dark:text-slate-500 truncate">
-                          <span className="truncate">{doc.Email}</span>
-                          {doc.Phone && (
-                            <>
-                              <span className="text-slate-300 dark:text-slate-600">•</span>
-                              <span className="shrink-0">{doc.Phone}</span>
-                            </>
-                          )}
+                        {/* Doctor Email */}
+                        <div className="mt-0.5 text-[11px] text-slate-400 dark:text-slate-500 truncate">
+                          <span className="truncate" title={doc.Email}>
+                            {doc.Email}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -245,25 +258,28 @@ export default function DoctorTableView({
                     </div>
                   </td>
 
-                  {/* 4. Fee & Schedule */}
+                  {/* 4. Schedule */}
                   <td className="py-3 px-3 align-middle">
-                    <div className="text-xs">
-                      <div className="font-semibold text-slate-900 dark:text-slate-100 tabular-nums">
-                        ₹{doc.ConsultationFee || 500}
-                        <span className="text-[10px] font-normal text-slate-400 dark:text-slate-500 ml-1">
-                          / visit
-                        </span>
+                    {doc.AvailableDays || doc.AvailableTime ? (
+                      <div className="text-xs space-y-1">
+                        <div className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300">
+                          <Calendar className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500 shrink-0" />
+                          <span className="font-medium truncate">
+                            {doc.AvailableDays || "—"}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-1.5 text-[11px] text-slate-400 dark:text-slate-500">
+                          <Clock className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500 shrink-0" />
+                          <span className="truncate">
+                            {doc.AvailableTime || "—"}
+                          </span>
+                        </div>
                       </div>
-                      <div className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5 truncate flex items-center gap-1">
-                        <span>{doc.AvailableDays || "Mon - Fri"}</span>
-                        {doc.AvailableTime && (
-                          <>
-                            <span className="text-slate-300 dark:text-slate-600">•</span>
-                            <span className="truncate">{doc.AvailableTime}</span>
-                          </>
-                        )}
-                      </div>
-                    </div>
+                    ) : (
+                      <span className="text-slate-400 dark:text-slate-500 font-normal text-xs">
+                        —
+                      </span>
+                    )}
                   </td>
 
                   {/* 5. Actions */}
@@ -277,7 +293,7 @@ export default function DoctorTableView({
                           onClick={(e) => {
                             e.stopPropagation();
                             setOpenStatusDropdownId((prev) =>
-                              prev === docId ? null : docId
+                              prev === docId ? null : docId,
                             );
                           }}
                           className={`inline-flex items-center gap-1 rounded-lg border px-2 py-1 text-[11px] font-medium shadow-2xs transition active:scale-95 disabled:opacity-50 cursor-pointer ${
@@ -318,7 +334,11 @@ export default function DoctorTableView({
                                   ? "bg-emerald-50 text-emerald-800 font-semibold cursor-default dark:bg-emerald-950/50 dark:text-emerald-300"
                                   : "text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 dark:text-slate-300 dark:hover:bg-emerald-950/40 dark:hover:text-emerald-300"
                               }`}
-                              title={isApproved ? "Already Approved" : "Approve doctor"}
+                              title={
+                                isApproved
+                                  ? "Already Approved"
+                                  : "Approve doctor"
+                              }
                             >
                               <div className="flex items-center gap-1.5">
                                 <Check className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
@@ -342,7 +362,11 @@ export default function DoctorTableView({
                                   ? "bg-rose-50 text-rose-800 font-semibold cursor-default dark:bg-rose-950/50 dark:text-rose-300"
                                   : "text-slate-700 hover:bg-rose-50 hover:text-rose-700 dark:text-slate-300 dark:hover:bg-rose-950/40 dark:hover:text-rose-300"
                               }`}
-                              title={isRejected ? "Already Rejected" : "Reject doctor application"}
+                              title={
+                                isRejected
+                                  ? "Already Rejected"
+                                  : "Reject doctor application"
+                              }
                             >
                               <div className="flex items-center gap-1.5">
                                 <X className="h-3.5 w-3.5 text-rose-600 dark:text-rose-400 shrink-0" />
@@ -387,4 +411,3 @@ export default function DoctorTableView({
     </div>
   );
 }
-

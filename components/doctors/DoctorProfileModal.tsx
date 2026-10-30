@@ -124,17 +124,82 @@ export default function DoctorProfileModal({
 
         {/* Content Body */}
         <div className="max-h-[60vh] overflow-y-auto px-5 pb-5 space-y-3.5">
-          {/* Key Metrics Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-            <div className="rounded-xl border border-slate-200/80 bg-slate-50/60 p-3 dark:border-slate-800 dark:bg-[#161619]">
-              <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 block mb-0.5">
-                Fee
+          {/* 1. All Three Consultation Fees */}
+          <div className="rounded-xl border border-slate-200/80 bg-slate-50/60 p-3.5 dark:border-slate-800 dark:bg-[#161619]">
+            <div className="flex items-center justify-between mb-2.5">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                Consultation Fees
               </span>
-              <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
-                ₹{doctor.ConsultationFee || 500}
-              </p>
+              <span className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">
+                Care Tiers
+              </span>
             </div>
 
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+              {/* Normal */}
+              <div className="rounded-xl border border-slate-200/70 bg-white p-2.5 shadow-2xs dark:border-slate-700/60 dark:bg-[#121215]">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-[11px] font-semibold text-slate-600 dark:text-slate-400">
+                    Normal
+                  </span>
+                  <span className="rounded px-1.5 py-0.2 text-[9px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/60 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-900/50">
+                    OPD
+                  </span>
+                </div>
+                <p className="text-base font-bold text-slate-900 dark:text-slate-100 tabular-nums">
+                  {(doctor.ConsultationFees?.Normal ?? doctor.ConsultationFee) !== undefined
+                    ? `₹${doctor.ConsultationFees?.Normal ?? doctor.ConsultationFee}`
+                    : "—"}
+                </p>
+                <span className="text-[10px] text-slate-400 dark:text-slate-500 block mt-0.5">
+                  Routine consultation
+                </span>
+              </div>
+
+              {/* Medium */}
+              <div className="rounded-xl border border-slate-200/70 bg-white p-2.5 shadow-2xs dark:border-slate-700/60 dark:bg-[#121215]">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-[11px] font-semibold text-slate-600 dark:text-slate-400">
+                    Medium
+                  </span>
+                  <span className="rounded px-1.5 py-0.2 text-[9px] font-bold bg-cyan-50 text-[#008ba3] border border-[#008ba3]/20 dark:bg-cyan-950/40 dark:text-cyan-400 dark:border-cyan-900/50">
+                    Priority
+                  </span>
+                </div>
+                <p className="text-base font-bold text-slate-900 dark:text-slate-100 tabular-nums">
+                  {doctor.ConsultationFees?.Medium !== undefined
+                    ? `₹${doctor.ConsultationFees.Medium}`
+                    : "—"}
+                </p>
+                <span className="text-[10px] text-slate-400 dark:text-slate-500 block mt-0.5">
+                  Priority / follow-up
+                </span>
+              </div>
+
+              {/* Emergency */}
+              <div className="rounded-xl border border-slate-200/70 bg-white p-2.5 shadow-2xs dark:border-slate-700/60 dark:bg-[#121215]">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-[11px] font-semibold text-slate-600 dark:text-slate-400">
+                    Emergency
+                  </span>
+                  <span className="rounded px-1.5 py-0.2 text-[9px] font-bold bg-rose-50 text-rose-700 border border-rose-200/60 dark:bg-rose-950/40 dark:text-rose-400 dark:border-rose-900/50">
+                    Urgent
+                  </span>
+                </div>
+                <p className="text-base font-bold text-slate-900 dark:text-slate-100 tabular-nums">
+                  {doctor.ConsultationFees?.Emergency !== undefined
+                    ? `₹${doctor.ConsultationFees.Emergency}`
+                    : "—"}
+                </p>
+                <span className="text-[10px] text-slate-400 dark:text-slate-500 block mt-0.5">
+                  Urgent &amp; 24x7 care
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* 2. Schedule & Experience Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
             <div className="rounded-xl border border-slate-200/80 bg-slate-50/60 p-3 dark:border-slate-800 dark:bg-[#161619]">
               <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 block mb-0.5">
                 Experience
@@ -146,19 +211,19 @@ export default function DoctorProfileModal({
 
             <div className="rounded-xl border border-slate-200/80 bg-slate-50/60 p-3 dark:border-slate-800 dark:bg-[#161619]">
               <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 block mb-0.5">
-                Days
+                Available Days
               </span>
               <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
-                {doctor.AvailableDays || "Mon - Fri"}
+                {doctor.AvailableDays || "—"}
               </p>
             </div>
 
             <div className="rounded-xl border border-slate-200/80 bg-slate-50/60 p-3 dark:border-slate-800 dark:bg-[#161619]">
               <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 block mb-0.5">
-                Hours
+                Available Hours
               </span>
               <p className="text-xs font-semibold text-slate-900 dark:text-slate-100 leading-snug">
-                {doctor.AvailableTime || "9am - 4pm"}
+                {doctor.AvailableTime || "—"}
               </p>
             </div>
           </div>

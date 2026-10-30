@@ -130,11 +130,11 @@ export default function DoctorCardsView({
               <div className="grid grid-cols-2 gap-2 rounded-lg border border-slate-100 bg-slate-50/60 p-2 text-[11px] text-slate-500 dark:border-slate-800 dark:bg-slate-850 dark:text-slate-400">
                 <div className="flex items-center gap-1.5">
                   <Calendar className="h-3 w-3 text-slate-400 dark:text-slate-500 shrink-0" />
-                  <span className="truncate">{doc.AvailableDays || "Mon - Fri"}</span>
+                  <span className="truncate">{doc.AvailableDays || "—"}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <Clock className="h-3 w-3 text-slate-400 dark:text-slate-500 shrink-0" />
-                  <span className="truncate">{doc.AvailableTime || "9am - 4pm"}</span>
+                  <span className="truncate">{doc.AvailableTime || "—"}</span>
                 </div>
               </div>
             </div>
@@ -142,8 +142,14 @@ export default function DoctorCardsView({
             {/* Bottom Actions */}
             <div className="mt-3.5 pt-2.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
               <div className="flex items-baseline gap-0.5 font-semibold text-slate-900 dark:text-slate-100 text-xs">
-                <span>₹{doc.ConsultationFee || 500}</span>
-                <span className="text-[10px] text-slate-400 dark:text-slate-500 font-normal ml-0.5">/ visit</span>
+                {(doc.ConsultationFees?.Normal ?? doc.ConsultationFee) !== undefined ? (
+                  <>
+                    <span>₹{doc.ConsultationFees?.Normal ?? doc.ConsultationFee}</span>
+                    <span className="text-[10px] text-slate-400 dark:text-slate-500 font-normal ml-0.5">/ visit</span>
+                  </>
+                ) : (
+                  <span className="text-slate-400 dark:text-slate-500 font-normal">—</span>
+                )}
               </div>
 
               <div className="flex items-center gap-1.5">
