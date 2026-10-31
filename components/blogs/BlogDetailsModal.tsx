@@ -56,10 +56,10 @@ export default function BlogDetailsModal({
 
   const authorName =
     typeof activeBlog.CreatedBy === "object" && activeBlog.CreatedBy !== null
-      ? activeBlog.CreatedBy.Name || "Dr. Solanki"
-      : typeof activeBlog.CreatedBy === "string"
-      ? "Dr. Solanki"
-      : "Solanki Medical Staff";
+      ? activeBlog.CreatedBy.Name || "Author"
+      : typeof activeBlog.CreatedBy === "string" && activeBlog.CreatedBy
+      ? activeBlog.CreatedBy
+      : "Medical Staff";
 
   const formattedDate = activeBlog.PublishedDate
     ? new Date(activeBlog.PublishedDate).toLocaleDateString("en-US", {

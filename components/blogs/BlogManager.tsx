@@ -132,7 +132,7 @@ export default function BlogManager() {
       total: totalBlogs,
       published,
       drafts,
-      categoriesCount: uniqueCategories || (categoriesList as string[]).length,
+      categoriesCount: uniqueCategories,
     };
   }, [blogs, totalBlogs]);
 
@@ -423,8 +423,10 @@ export default function BlogManager() {
             const blogId = (blog._id || blog.Id)!;
             const authorName =
               typeof blog.CreatedBy === "object" && blog.CreatedBy !== null
-                ? blog.CreatedBy.Name || "Dr. Solanki"
-                : "Dr. Solanki";
+                ? blog.CreatedBy.Name || "Author"
+                : typeof blog.CreatedBy === "string" && blog.CreatedBy
+                ? blog.CreatedBy
+                : "Author";
 
             return (
               <div
@@ -568,8 +570,10 @@ export default function BlogManager() {
                   const authorName =
                     typeof blog.CreatedBy === "object" &&
                     blog.CreatedBy !== null
-                      ? blog.CreatedBy.Name || "Dr. Solanki"
-                      : "Dr. Solanki";
+                      ? blog.CreatedBy.Name || "Author"
+                      : typeof blog.CreatedBy === "string" && blog.CreatedBy
+                      ? blog.CreatedBy
+                      : "Author";
 
                   return (
                     <tr

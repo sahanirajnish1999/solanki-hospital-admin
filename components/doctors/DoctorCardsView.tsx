@@ -110,11 +110,11 @@ export default function DoctorCardsView({
                   <div className="mt-1 flex items-center gap-1.5 flex-wrap">
                     <div className="flex items-center gap-1 text-[11px] text-slate-600 dark:text-slate-400">
                       <SpecializationIconBadge
-                        name={doc.Specialization || "General Medicine"}
+                        name={doc.Specialization || "Doctor"}
                         size="sm"
                       />
                       <span className="truncate max-w-[150px] font-medium text-slate-800 dark:text-slate-200">
-                        {doc.Specialization || "General Medicine"}
+                        {doc.Specialization || "—"}
                       </span>
                     </div>
                   </div>

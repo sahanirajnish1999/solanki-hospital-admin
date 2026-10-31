@@ -129,7 +129,7 @@ export default function AppointmentTableView({
                             {app.DoctorName}
                           </div>
                           <div className="text-[11px] text-slate-500 truncate">
-                            {app.DoctorSpecialization || "General Medicine"}
+                            {app.DoctorSpecialization || "—"}
                           </div>
                         </div>
                       </div>
@@ -159,14 +159,14 @@ export default function AppointmentTableView({
                     <td className="py-3.5 px-3 align-middle">
                       <div className="flex items-center gap-2.5">
                         <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-blue-50 font-mono font-bold text-blue-700 text-xs border border-blue-100">
-                          #{app.TokenNumber || 1}
+                          #{app.TokenNumber ?? "—"}
                         </div>
                         <div className="min-w-0">
                           <div className="text-xs font-bold text-slate-900">
                             {formattedDate}
                           </div>
                           <div className="text-[11px] text-slate-500 mt-0.5">
-                            {app.AppointmentTime || "09:00 AM"}
+                            {app.AppointmentTime || "—"}
                           </div>
                         </div>
                       </div>

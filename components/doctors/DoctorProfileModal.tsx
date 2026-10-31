@@ -107,16 +107,20 @@ export default function DoctorProfileModal({
               {/* Specialization & Registration Details */}
               <div className="mt-0.5 flex flex-wrap items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
                 <span className="font-medium text-slate-700 dark:text-slate-300">
-                  {doctor.Specialization || "General Medicine"}
+                  {doctor.Specialization || "—"}
                 </span>
                 <span>•</span>
                 <span className="text-[11px] text-slate-400 dark:text-slate-500">
                   Registered {doctor.createdAt ? new Date(doctor.createdAt).toLocaleDateString() : "—"}
                 </span>
-                <span>•</span>
-                <span className="text-[11px] text-slate-400 dark:text-slate-500">
-                  Added via {doctor.RegisteredBy || "Self"}
-                </span>
+                {doctor.RegisteredBy && (
+                  <>
+                    <span>•</span>
+                    <span className="text-[11px] text-slate-400 dark:text-slate-500">
+                      Added via {doctor.RegisteredBy}
+                    </span>
+                  </>
+                )}
               </div>
             </div>
           </div>

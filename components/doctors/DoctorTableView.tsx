@@ -210,15 +210,15 @@ export default function DoctorTableView({
                   <td className="py-3 px-3 align-middle">
                     <div className="flex items-center gap-2">
                       <SpecializationIconBadge
-                        name={doc.Specialization || "General Medicine"}
+                        name={doc.Specialization || "Doctor"}
                         size="sm"
                       />
                       <div className="min-w-0">
                         <div className="text-xs font-medium text-slate-900 dark:text-slate-100 truncate">
-                          {doc.Specialization || "General Medicine"}
+                          {doc.Specialization || "—"}
                         </div>
                         <div className="text-[10px] text-slate-400 dark:text-slate-500">
-                          Specialist
+                          {doc.Specialization ? "Specialist" : "General"}
                         </div>
                       </div>
                     </div>

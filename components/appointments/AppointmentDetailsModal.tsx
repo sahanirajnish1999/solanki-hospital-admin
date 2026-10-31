@@ -117,7 +117,7 @@ export default function AppointmentDetailsModal({
               </h3>
               <div className="flex items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
                 <span className="font-medium text-slate-600 dark:text-slate-300">
-                  Token #{appointment?.TokenNumber || 1}
+                  Token #{appointment?.TokenNumber ?? "—"}
                 </span>
                 {appointment?.createdAt && (
                   <>
@@ -258,7 +258,7 @@ export default function AppointmentDetailsModal({
                 {/* Token Badge */}
                 <div className="inline-flex items-center gap-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200 px-2.5 py-0.5 text-[11px] font-mono font-medium dark:bg-blue-950/40 dark:text-blue-300 dark:border-blue-800/50">
                   <Hash className="h-3 w-3 text-blue-500 dark:text-blue-400" />
-                  <span>Token #{appointment.TokenNumber || 1}</span>
+                  <span>Token #{appointment.TokenNumber ?? "—"}</span>
                 </div>
               </div>
 
@@ -286,7 +286,7 @@ export default function AppointmentDetailsModal({
                       </h4>
                       <div className="mt-0.5">
                         <span className="inline-flex items-center rounded-md bg-blue-50 px-2 py-0.5 text-[10px] font-medium text-blue-700 border border-blue-100 dark:bg-blue-950/40 dark:text-blue-300 dark:border-blue-800/50">
-                          {appointment.DoctorSpecialization || "General Medicine"}
+                          {appointment.DoctorSpecialization || "—"}
                         </span>
                       </div>
                     </div>
@@ -361,7 +361,7 @@ export default function AppointmentDetailsModal({
                       </div>
                       <div className="flex items-center gap-1.5 text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
                         <Clock className="h-3 w-3 text-amber-500" />
-                        <span>{appointment.AppointmentTime || "09:00 AM"}</span>
+                        <span>{appointment.AppointmentTime || "—"}</span>
                       </div>
                     </div>
                   </div>

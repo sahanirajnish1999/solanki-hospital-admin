@@ -99,7 +99,7 @@ function BlogFormInner({
   // Form states initialized directly from initialBlog (fresh instance per key)
   const [title, setTitle] = useState(initialBlog?.Title || "");
   const [category, setCategory] = useState(
-    initialBlog?.Category || categoriesList[0] || "SPORTS INJURY",
+    initialBlog?.Category || categoriesList[0] || "",
   );
   const [content, setContent] = useState(initialBlog?.Content || "");
   const [highlights, setHighlights] = useState<string[]>(() =>

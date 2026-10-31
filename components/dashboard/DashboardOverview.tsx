@@ -62,8 +62,10 @@ export default function DashboardOverview({
     docData?.Data?.Summary?.Total ??
     (docData?.Data?.Pagination?.Total || doctors.length);
   const onlineDoctorsCount = doctors.filter((d) => d.IsOnline).length;
-  const totalAdmins = adminData?.Pagination?.Total || 1;
-  const totalBlogs = blogData?.Pagination?.Total ?? (blogData?.Data?.length || 0);
+  const totalAdmins =
+    adminData?.Pagination?.Total ?? (adminData?.Data ? adminData.Data.length : 1);
+  const totalBlogs =
+    blogData?.Pagination?.Total ?? (blogData?.Data ? blogData.Data.length : 0);
 
   const appointments = appointmentData?.Data?.Appointments || [];
   const totalAppointments =
@@ -153,7 +155,7 @@ export default function DashboardOverview({
             {/* Title */}
             <div>
               <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-white">
-                Good day, {admin?.Name || "Dr. Solanki"}
+                Good day, {admin?.Name || "Administrator"}
               </h1>
             </div>
 
@@ -316,7 +318,7 @@ export default function DashboardOverview({
                         {spec.Name}
                       </p>
                       <p className="text-[11px] text-slate-400 truncate max-w-xs sm:max-w-sm">
-                        {spec.Description || "Specialized clinical care & treatment"}
+                        {spec.Description || "—"}
                       </p>
                     </div>
                   </div>
@@ -422,7 +424,7 @@ export default function DashboardOverview({
                           )}
                         </div>
                         <p className="text-[11px] text-slate-400 truncate">
-                          {doc.Specialization || "General Physician"}
+                          {doc.Specialization || "—"}
                         </p>
                       </div>
                     </div>
@@ -430,7 +432,11 @@ export default function DashboardOverview({
                     <div className="flex items-center gap-2 shrink-0">
                       <span className="flex items-center gap-1 rounded bg-slate-100 px-1.5 py-0.5 text-[11px] font-medium text-slate-700 border border-slate-200/80">
                         <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
-                        <span>{doc.Rating || 4.8}</span>
+                        <span>
+                          {doc.Rating && doc.Rating > 0
+                            ? doc.Rating.toFixed(1)
+                            : "—"}
+                        </span>
                       </span>
                       <ArrowRight className="h-3 w-3 text-slate-300 group-hover:text-slate-600 group-hover:translate-x-0.5 transition" />
                     </div>
@@ -515,7 +521,7 @@ export default function DashboardOverview({
                   {/* Patient Info */}
                   <div className="flex items-center gap-2.5 min-w-0">
                     <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-700 font-semibold text-xs border border-slate-200">
-                      #{appt.TokenNumber || 1}
+                      #{appt.TokenNumber ?? "—"}
                     </div>
                     <div className="min-w-0">
                       <p className="text-xs font-semibold text-slate-900 group-hover:text-slate-950 transition truncate">
@@ -541,7 +547,7 @@ export default function DashboardOverview({
                     <div className="text-left sm:text-right">
                       <div className="flex items-center sm:justify-end gap-1 text-[11px] font-medium text-slate-600">
                         <Clock className="h-3 w-3 text-slate-400" />
-                        <span>{appt.AppointmentTime || "Regular Slot"}</span>
+                        <span>{appt.AppointmentTime || "—"}</span>
                       </div>
                       <span className="text-[10px] text-slate-400">
                         {formatAppointmentDate(appt.AppointmentDate)}
