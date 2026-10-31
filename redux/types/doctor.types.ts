@@ -48,8 +48,8 @@ export interface CreateDoctorRequest {
   ConsultationFee?: number;
   ConsultationFees?: {
     Normal: number;
-    Medium: number;
-    Emergency: number;
+    Medium?: number;
+    Emergency?: number;
   };
   AvailableDays?: string;
   AvailableTime?: string;

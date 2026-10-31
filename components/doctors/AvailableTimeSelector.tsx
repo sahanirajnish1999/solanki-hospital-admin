@@ -131,7 +131,7 @@ export default function AvailableTimeSelector({
     >
       {/* Label and Custom Dropdown Component */}
       <div className="flex items-center justify-between gap-1.5">
-        <label className="block text-xs font-semibold text-slate-700 whitespace-nowrap shrink-0">
+        <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 whitespace-nowrap shrink-0">
           {label} {required && <span className="text-rose-500">*</span>}
         </label>
         <div className="w-32 sm:w-36 shrink-0">
@@ -140,8 +140,8 @@ export default function AvailableTimeSelector({
             value={activePreset}
             onChange={handlePresetSelect}
             onOpenChange={setIsDropdownOpen}
-            triggerClassName="!py-1 !px-2.5 !rounded-lg text-[11px] font-semibold bg-slate-50/90 border-slate-200"
-            dropdownClassName="w-64 !left-auto right-0 text-xs shadow-2xl border-slate-200"
+            triggerClassName="!py-1 !px-2.5 !rounded-lg text-[11px] font-semibold bg-white border-slate-200 shadow-2xs hover:border-[#008ba3]/40 dark:bg-[#161619] dark:border-slate-800"
+            dropdownClassName="w-64 !left-auto right-0 text-xs shadow-2xl border-slate-200 dark:border-slate-800 dark:bg-[#121215]"
             placeholder="Preset..."
             placement="auto"
           />
@@ -149,7 +149,7 @@ export default function AvailableTimeSelector({
       </div>
 
       {/* Quick Shift Pills */}
-      <div className="flex items-center justify-between gap-1 rounded-xl border border-slate-200/70 bg-slate-50/80 p-1">
+      <div className="grid grid-cols-4 gap-1 rounded-xl border border-slate-200/90 bg-slate-50/80 p-1 shadow-2xs dark:border-slate-800 dark:bg-[#161619]">
         {TIME_SHIFTS.map((shift) => {
           const isSelected = activeShiftKey === shift.key;
           return (
@@ -158,10 +158,10 @@ export default function AvailableTimeSelector({
               type="button"
               onClick={() => handleShiftSelect(shift)}
               title={`${shift.label}: ${shift.time}`}
-              className={`flex-1 rounded-lg py-1.5 text-center text-[10px] sm:text-[11px] font-semibold transition-all duration-150 cursor-pointer select-none ${
+              className={`relative rounded-lg py-1.5 text-center text-[10px] sm:text-[11px] font-semibold transition-all duration-150 cursor-pointer select-none ${
                 isSelected
-                  ? "bg-[#008ba3] text-white shadow-2xs font-bold scale-[1.02]"
-                  : "text-slate-500 hover:bg-slate-200/60 hover:text-slate-800"
+                  ? "bg-[#008ba3] text-white shadow-2xs font-bold"
+                  : "text-slate-600 hover:bg-slate-200/60 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200"
               }`}
             >
               {shift.label}
@@ -177,16 +177,16 @@ export default function AvailableTimeSelector({
           type="text"
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          placeholder="Available Time"
+          placeholder="e.g. 9:00 AM - 5:00 PM"
           required={required}
-          className="w-full rounded-xl border border-slate-200 bg-slate-50/70 py-2.5 pl-10 pr-8 text-xs text-slate-900 placeholder:text-slate-400 outline-none transition-all duration-150 focus:border-[#008ba3] focus:bg-white focus:ring-3 focus:ring-[#008ba3]/10"
+          className="w-full rounded-xl border border-slate-200 bg-slate-50/70 py-2.5 pl-10 pr-8 text-xs text-slate-900 placeholder:text-slate-400 outline-none transition-all duration-150 focus:border-[#008ba3] focus:bg-white focus:ring-3 focus:ring-[#008ba3]/10 dark:border-slate-800 dark:bg-[#161619] dark:text-slate-100"
         />
         {value && (
           <button
             type="button"
             onClick={() => onChange("")}
             title="Clear"
-            className="absolute right-2.5 flex h-4 w-4 items-center justify-center rounded-full text-slate-400 hover:bg-slate-200 hover:text-slate-600 cursor-pointer"
+            className="absolute right-2.5 flex h-4 w-4 items-center justify-center rounded-full text-slate-400 hover:bg-slate-200 hover:text-slate-600 cursor-pointer dark:hover:bg-slate-800"
           >
             <X className="h-3 w-3" />
           </button>
